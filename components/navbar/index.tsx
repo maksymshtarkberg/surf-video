@@ -10,21 +10,6 @@ import NavArrow from "components/NavArrowBack";
 
 type Props = {};
 
-const navigation = [
-  {
-    name: "New",
-    href: "/new",
-  },
-  {
-    name: "Top",
-    href: "/top",
-  },
-  {
-    name: "Cities",
-    href: "/cities",
-  },
-];
-
 const Navbar: FC<Props> = ({}) => {
   return (
     <header className="sticky z-10 top-0 bg-transparent">

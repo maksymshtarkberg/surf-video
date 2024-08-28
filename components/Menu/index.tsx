@@ -123,9 +123,11 @@ const Menu: NextPage<Props> = ({ cities, videosByCity }) => {
                 {openCity === city && (
                   <ul className="absolute left-full top-0 mt-0 ml-2 w-48 bg-white border rounded-lg shadow-lg">
                     {videos.map(({ slug, title }) => (
-                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                      <li
+                        key={slug}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      >
                         <Link
-                          key={slug}
                           href={buildVideoUrl(slug)}
                           className="block truncate "
                         >
