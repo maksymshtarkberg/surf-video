@@ -1,8 +1,6 @@
 import { connectToDb } from "@db/database";
-import { getSEOTags } from "@db/services/tags.service";
-import { searchVideos } from "@db/services/videos.service";
+import { countVideos, searchVideos } from "@db/services/videos.service";
 import Pagination from "components/pagination";
-import TagsSection from "components/tags/TagSection";
 import VideosSection from "components/videos/VideosSection";
 import { videoPreviewSelector } from "@db/selectors";
 import { GetServerSideProps, NextPage } from "next";
@@ -15,18 +13,41 @@ import {
 } from "utils/helpers";
 import config from "tube.config";
 import { buildTagUrl } from "utils/navigation";
+import { useRouter } from "next/router";
 
 type Props = {
   page: number;
   keyword: string;
   videos: Video[];
-  tags: string[];
   role: TagRole;
+  totalVideos: number;
 };
 
-const TagPage: NextPage<Props> = ({ videos, page, keyword, tags, role }) => {
-  console.log(videos, page);
-  const configData = config[role];
+const TagPage: NextPage<Props> = ({
+  videos,
+  page,
+  keyword,
+  role,
+  totalVideos,
+}) => {
+  const router = useRouter();
+
+  const videosPerPage = 6;
+  const maxPage = Math.ceil(totalVideos / videosPerPage);
+  console.log(maxPage);
+  const handlePrevPage = () => {
+    if (page >= 1) {
+      const prevPageUrl = buildTagUrl(keyword, role, page - 1);
+      router.push(prevPageUrl);
+    }
+  };
+  const handleNextPage = () => {
+    if (page < maxPage) {
+      const hrefNextPage = buildTagUrl(keyword, role, page + 1);
+      router.push(hrefNextPage);
+    }
+  };
+
   return (
     <div
       className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0 py-12"
@@ -34,12 +55,11 @@ const TagPage: NextPage<Props> = ({ videos, page, keyword, tags, role }) => {
     >
       <VideosSection headline={`${keyword}`} videos={videos} />
       <Pagination
-        hrefPrevPage={buildTagUrl(keyword, role, page - 1)}
-        hrefNextPage={buildTagUrl(keyword, role, page + 1)}
+        hrefPrevPage={handlePrevPage}
+        hrefNextPage={handleNextPage}
         currentPage={page}
-        maxPage={configData.maxPage}
+        maxPage={maxPage}
       />
-      <TagsSection headline="Related Tags" variant="h2" tags={tags} />
     </div>
   );
 };
@@ -58,23 +78,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   await connectToDb();
   const { page, keyword } = pageData;
+
+  const limit = 6;
+
+  const offset = (page - 1) * limit;
+
+  const totalVideos = await countVideos(keyword);
+  console.log("HERE", keyword);
   const videos = await searchVideos(
     keyword,
-    configData.videosLimit,
-    videoPreviewSelector
+    limit,
+    videoPreviewSelector,
+    offset
   );
-  const tags = await getSEOTags(keyword, configData.tagsLimit, {
-    _id: 0,
-    name: 1,
-  });
 
   return {
     props: {
       page,
       keyword,
       videos: toJson(videos),
-      tags: toJson(tags.map((tag) => tag.name)),
       role: getTagRoleByRoute(path as string),
+      totalVideos,
     },
   };
 };

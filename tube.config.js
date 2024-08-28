@@ -15,6 +15,7 @@ module.exports = {
     toplist: "cities",
     top: "top",
     new: "new",
+    page: "page",
   },
   /** Index Page **/
   index: {
@@ -59,6 +60,10 @@ module.exports = {
   /** Top Page **/
   top: {
     identifier: "top",
+    ...sharedConfig,
+  },
+  page: {
+    identifier: "page",
     ...sharedConfig,
   },
 };

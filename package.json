@@ -31,9 +31,7 @@
     "sharp": "^0.31.1",
     "stream-browserify": "^3.0.0",
     "tube-utils": "^1.2.2",
-    "util": "^0.12.5",
-    "videojs-contrib-ads": "^7.5.2",
-    "videojs-ima": "^2.3.0"
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@types/mongoose": "^5.11.97",

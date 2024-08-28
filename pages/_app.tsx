@@ -1,4 +1,3 @@
-import "video.js/dist/video-js.css";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import BaseLayout from "components/layout/BaseLayout";

@@ -14,6 +14,7 @@ export type Video = {
   categories: string[];
   models: string[];
   createdAt: Date;
+  city: string;
 };
 
 export type VideoMeta = {
@@ -50,4 +51,4 @@ export type FeedbackSubject = "others" | "age" | "broken" | "copyrights";
 
 export type Routes = "video" | TagRole | NavPages;
 
-export type NavPages = "top" | "new";
+export type NavPages = "top" | "new" | "page";

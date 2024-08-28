@@ -11,6 +11,8 @@ import config from "tube.config";
 import { NavPages, Video } from "types/types";
 import { getPage, toJson, validateNavPages } from "utils/helpers";
 import { buildNavUrl } from "utils/navigation";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 type Props = {
   videos: Video[];
@@ -21,15 +23,47 @@ type Props = {
 
 const NavPage: NextPage<Props> = ({ videos, tags, role, page }) => {
   const configData = config[role];
+
+  const router = useRouter();
+  console.log(tags);
+  const videosPerPage = 6;
+  const [pageCount, setPageCount] = useState(page);
+  const startIndex = (pageCount - 1) * videosPerPage;
+  const endIndex = startIndex + videosPerPage;
+  const paginatedVideos = videos.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(videos.length / videosPerPage);
+
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPageCount(pageCount - 1);
+      const url = buildNavUrl("page", pageCount);
+      router.push(url);
+      console.log("PREV", page, url);
+    }
+  };
+
+  const handleNextPage = () => {
+    console.log(pageCount);
+
+    if (page < totalPages) {
+      setPageCount(pageCount + 1);
+      const url = buildNavUrl("page", pageCount);
+
+      router.push(url);
+      console.log("NEXT", pageCount, url);
+    }
+  };
+
   return (
     <div
       className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0 py-12"
       id="cams"
     >
-      <VideosSection headline={"TOP / NEW"} videos={videos} />
+      <VideosSection headline={"TOP / NEW"} videos={paginatedVideos} />
       <Pagination
-        hrefPrevPage={buildNavUrl(role, page - 1)}
-        hrefNextPage={buildNavUrl(role, page + 1)}
+        hrefPrevPage={handlePrevPage}
+        hrefNextPage={handleNextPage}
         currentPage={page}
         maxPage={configData.maxPage}
       />

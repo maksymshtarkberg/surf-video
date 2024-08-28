@@ -111,7 +111,8 @@ export const searchRelatedVideos = async (
 export const searchVideos = async (
   keyword: string,
   limit: number,
-  select: any = {}
+  select: any = {},
+  offset: number
 ) => {
   try {
     const videos = await Videos.find({
@@ -124,9 +125,25 @@ export const searchVideos = async (
     })
       .sort({ score: { $meta: "textScore" } })
       .limit(limit)
+      .skip(offset)
       .select(select);
     return videos;
   } catch (err: any) {
     return [];
+  }
+};
+
+export const countVideos = async (keyword: string) => {
+  try {
+    const count = await Videos.countDocuments({
+      $text: {
+        $search: keyword,
+        $caseSensitive: false,
+        $diacriticSensitive: false,
+      },
+    });
+    return count;
+  } catch (err) {
+    return 0;
   }
 };

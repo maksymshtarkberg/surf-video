@@ -24,15 +24,20 @@ export const addPage = (str: string, page: number = 1) => {
   return str.concat(`-${page}`);
 };
 
-export const getPage = (str: string) => {
+export const getPage = (str: string | undefined) => {
   try {
+    if (!str || typeof str !== "string") return null;
+
     const pos = str.lastIndexOf("-");
     if (pos === -1) return null;
+
     const keyword = str.substring(0, pos);
     const page = str.substring(pos + 1);
+
     if (isNaN(parseFloat(page)) || isNaN(+page)) return null;
+
     return { keyword: keyword.replaceAll("-", " "), page: parseFloat(page) };
-  } catch (err: any) {
+  } catch (err) {
     console.log(err);
     return null;
   }
@@ -67,7 +72,11 @@ export const validateTagRole = (str: string) => {
 };
 
 export const validateNavPages = (str: string) => {
-  if (getRoute("top") === str || getRoute("new") === str) {
+  if (
+    getRoute("top") === str ||
+    getRoute("new") === str
+    // || getRoute("page") === str
+  ) {
     return true;
   }
   return false;

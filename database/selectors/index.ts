@@ -15,6 +15,11 @@ export const videoPreviewSelector = {
   thumbnail: 1,
 };
 
+export const videoTitleSelector = {
+  slug: 1,
+  title: 1,
+};
+
 export const videoFullSelector = {
   ...videoSelector,
   poster: 1,

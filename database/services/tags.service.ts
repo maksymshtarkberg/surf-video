@@ -1,10 +1,10 @@
-import Tags from '@db/models/tags.model';
-import { generateTagId } from '@db/utils/helpers';
-import { TagRole, Video } from 'types/types';
+import Tags from "@db/models/tags.model";
+import { generateTagId } from "@db/utils/helpers";
+import { TagRole, Video } from "types/types";
 
 export const getRandomTags = async (
   amount: number,
-  role: TagRole = 'tag',
+  role: TagRole = "tag",
   select: any = {}
 ) => {
   try {
@@ -33,10 +33,10 @@ export const searchRelatedTags = async (
         $caseSensitive: true,
         $diacriticSensitive: true,
       },
-      score: { $meta: 'textScore' },
-      role: 'tag',
+      score: { $meta: "textScore" },
+      role: "tag",
     })
-      .sort({ score: { $meta: 'textScore' } })
+      .sort({ score: { $meta: "textScore" } })
       .limit(limit)
       .select(select);
     return tags;
@@ -51,6 +51,7 @@ export const getPopularTags = async (
   select: any = {},
   fillArray: boolean = true
 ) => {
+  console.log(role);
   try {
     const tags = await Tags.find({ role: role, isPriority: true })
       .limit(limit)
@@ -76,7 +77,7 @@ export const getSEOTags = async (
   limit: number,
   select: any = {}
 ) => {
-  const role = 'tag';
+  const role = "tag";
   // 5 Prio Tags
   const prioTags = await Tags.aggregate([
     { $match: { role: role, isPriority: true } },

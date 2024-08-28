@@ -49,7 +49,7 @@ const VideoPlayer = () => {
   `;
 
   return (
-    <AppContainer>
+    <div className="w-full h-[90vh] flex flex-col items-center">
       {authorized ? (
         <Player
           hostname="195.60.68.14:12025"
@@ -61,7 +61,7 @@ const VideoPlayer = () => {
       ) : (
         <div>Failed to load video</div>
       )}
-    </AppContainer>
+    </div>
   );
 };
 

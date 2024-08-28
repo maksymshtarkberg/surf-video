@@ -1,58 +1,103 @@
 import { GetServerSideProps, NextPage } from "next";
-import CategoriesSection from "components/categories/CategoriesSection";
-import TagsSection from "components/tags/TagSection";
 import VideosSection from "components/videos/VideosSection";
-import { Category, TagRole, Video } from "types/types";
-import { getPopularTags, getSEOTags } from "@db/services/tags.service";
+import { TagRole, Video } from "types/types";
 import { connectToDb } from "@db/database";
-import { toJson } from "utils/helpers";
-import { getRandomVideos } from "@db/services/videos.service";
-import { categorySelector, videoPreviewSelector } from "@db/selectors";
-import { index } from "tube.config";
-import Hero from "components/hero/Hero";
-import VideoPlayer from "components/video/VideoPlayer";
+import { getPage, toJson } from "utils/helpers";
+import { getRandomVideos, searchVideos } from "@db/services/videos.service";
+import { videoPreviewSelector, videoTitleSelector } from "@db/selectors";
+import Pagination from "components/pagination";
+import { useState } from "react";
+import { buildNavUrl } from "utils/navigation";
+import { useRouter } from "next/router";
+import { getPopularTags } from "@db/services/tags.service";
+import { toplist } from "tube.config";
+import Menu from "components/Menu";
+import Navbar from "components/navbar";
 
 type Props = {
-  categories: Category[];
   videos: Video[];
-  tags: string[];
+  models: string[];
+  videosByCity: {
+    city: string;
+    videos: VideoTitle;
+  }[];
 };
 
-const HomePage: NextPage<Props> = ({ categories, videos, tags }) => {
+type VideoTitle = {
+  slug: string;
+  title: string;
+}[];
+
+const HomePage: NextPage<Props> = ({ videos, models, videosByCity }) => {
+  const videosPerPage = 6;
+  const [page, setPage] = useState(1);
+  const startIndex = (page - 1) * videosPerPage;
+  const endIndex = startIndex + videosPerPage;
+  const paginatedVideos = videos.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(videos.length / videosPerPage);
+
+  const handlePrevPage = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    console.log(page);
+
+    if (page < totalPages) {
+      setPage(page + 1);
+    }
+  };
+
   return (
-    <>
-      <Hero />
-      <div
-        className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0 py-12"
-        id="cams"
-      >
-        {/* <CategoriesSection
-          headline="Categories"
-          variant="h2"
-          categories={categories}
-        /> */}
-        <VideosSection headline="Latest Videos" variant="h2" videos={videos} />
-        <TagsSection headline="Popular Searches" variant="h2" tags={tags} />
-      </div>
-    </>
+    <div
+      className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0 py-12"
+      id="cams"
+    >
+      <Menu cities={models} videosByCity={videosByCity} />
+
+      <VideosSection
+        headline="Latest Videos"
+        variant="h2"
+        videos={paginatedVideos}
+      />
+      <Pagination
+        hrefPrevPage={handlePrevPage}
+        hrefNextPage={handleNextPage}
+        currentPage={page}
+        maxPage={totalPages}
+      />
+    </div>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   await connectToDb();
-  const videos = await getRandomVideos(index.videosLimit, videoPreviewSelector);
-  const tags = await getSEOTags("", index.tagsLimit, { _id: 0, name: 1 });
-  const categories = await getPopularTags(
-    index.categoriesSectionRole as TagRole,
-    index.categoriesSectionLimit,
-    categorySelector
+  const videos = await getRandomVideos(30, videoPreviewSelector);
+
+  const models = await getPopularTags(
+    toplist.role as TagRole,
+    toplist.listLimit,
+    {
+      _id: 0,
+      name: 1,
+    }
   );
 
+  const videosByCity = await Promise.all(
+    models.map(async (model) => {
+      const city = model.name;
+      const videosCity = await searchVideos(city, 5, videoTitleSelector, 0);
+      return { city, videos: videosCity };
+    })
+  );
   return {
     props: {
-      categories: toJson(categories),
       videos: toJson(videos),
-      tags: toJson(tags.map((tag) => tag.name)),
+      models: toJson(models.map((model) => model.name)),
+      videosByCity: toJson(videosByCity),
     },
   };
 };

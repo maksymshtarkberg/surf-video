@@ -1,5 +1,5 @@
+import NavArrow from "components/NavArrowBack";
 import Footer from "components/footer";
-import Hero from "components/hero/Hero";
 import Navbar from "components/navbar";
 import React, { FC } from "react";
 

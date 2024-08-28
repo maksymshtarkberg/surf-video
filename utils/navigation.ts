@@ -10,9 +10,9 @@ export const buildVideoUrl = (slug: string) => {
   return "/" + `${getRoute("video")}/${slug}`;
 };
 
-export const buildNavUrl = (route: NavPages, page = 1) => {
+export const buildNavUrl = (route: NavPages, page: number) => {
   let url = "/" + `${getRoute(route)}`;
-  if (page > 1) {
+  if (page >= 1) {
     url += `-${page}`;
   }
   return url;
