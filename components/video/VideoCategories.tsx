@@ -23,7 +23,7 @@ const VideoCategories: FC<Props> = ({ categories, models }) => {
       {models.map((model) => (
         <Link key={model} href={buildTagUrl(model, "city")}>
           <a>
-            <div className="py-1 px-3 border-2 border-secondary hover:bg-secondary rounded-md cursor-pointer mr-2 mb-2 inline-flex items-center">
+            <div className="py-1 px-3 border-2 border-primary hover:bg-secondary rounded-md cursor-pointer mr-2 mb-2 inline-flex items-center">
               <UserCircleIcon className="w-5 h-5 mr-1" /> {model}
             </div>
           </a>

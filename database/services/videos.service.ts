@@ -85,25 +85,23 @@ export const getVideos = async (
 
 export const searchRelatedVideos = async (
   id: number,
-  keyword: string,
+  models: string[],
   limit: number,
   select: any = {}
 ) => {
   try {
-    const videos = await Videos.find({
+    const regexModels = models.map((model) => new RegExp(model, "i"));
+
+    const query = {
       id: { $ne: id },
-      $text: {
-        $search: keyword,
-        $caseSensitive: true,
-        $diacriticSensitive: true,
-      },
-      score: { $meta: "textScore" },
-    })
-      .sort({ score: { $meta: "textScore" } })
-      .limit(limit)
-      .select(select);
+      models: { $in: regexModels },
+    };
+
+    const videos = await Videos.find(query).limit(limit).select(select).exec();
+
     return videos;
   } catch (err: any) {
+    console.error("Error searching related videos:", err);
     return [];
   }
 };

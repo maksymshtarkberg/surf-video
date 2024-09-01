@@ -50,7 +50,7 @@ const TagPage: NextPage<Props> = ({
 
   return (
     <div
-      className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0 py-12"
+      className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0"
       id="cams"
     >
       <VideosSection headline={`${keyword}`} videos={videos} />
@@ -84,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const offset = (page - 1) * limit;
 
   const totalVideos = await countVideos(keyword);
-  console.log("HERE", keyword);
+
   const videos = await searchVideos(
     keyword,
     limit,

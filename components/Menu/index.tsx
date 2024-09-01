@@ -4,6 +4,7 @@ import { Video } from "types/types";
 import { slugifyAndPage } from "utils/helpers";
 import { buildTagUrl, buildVideoUrl } from "utils/navigation";
 import Link from "next/link";
+import Button from "@ui/Button";
 
 type Props = {
   cities: string[];
@@ -57,35 +58,17 @@ const Menu: NextPage<Props> = ({ cities, videosByCity }) => {
   }, [isMenuOpen]);
 
   return (
-    <div ref={menuRef} className="relative z-10 ">
-      <button
-        className="flex items-center p-2 border rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
-        aria-haspopup="true"
-        aria-expanded={isMenuOpen}
-        title="Show Cities"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-      >
-        <span className="">Menu</span>
-        <svg
-          className={`w-4 h-4 transform ${
-            isMenuOpen === true ? "rotate-0" : "-rotate-90"
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M19 9l-7 7-7-7"
-          ></path>
-        </svg>
-      </button>
+    <div ref={menuRef} className="relative z-10 py-2">
+      <div className="absolute bottom-[25px] 2xl:-left-[15%] xl:-left-[5%] lg:block md:hidden">
+        <Button
+          text="Menu"
+          outline={true}
+          onClickHandler={() => setIsMenuOpen(!isMenuOpen)}
+        />
+      </div>
 
       {isMenuOpen && (
-        <div className="absolute mt-2 left-0 w-56 bg-white border rounded-lg shadow-lg">
+        <div className="absolute mt-2 2xl:-left-[3%] xl:left-[5%] top-[-15px]  w-56 bg-white border rounded-lg shadow-lg">
           <ul className="py-2">
             {videosByCity.map(({ city, videos }) => (
               <li

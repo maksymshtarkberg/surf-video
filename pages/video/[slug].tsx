@@ -16,21 +16,16 @@ import TagsSection from "components/tags/TagSection";
 
 type Props = {
   video: Video;
+  relatedVideos: Video[];
 };
 
-const VideoPage: NextPage<Props> = ({ video }) => {
+const VideoPage: NextPage<Props> = ({ video, relatedVideos }) => {
   return (
     <div
-      className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0 py-12"
+      className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0"
       id="cams"
     >
-      <VideoSection video={video} />
-      {/* <VideosSection
-        headline="Most Related Videos"
-        variant="h2"
-        videos={relevantVideos}
-      /> */}
-      {/* <TagsSection headline="Popular Searches" variant="h2" tags={tags} /> */}
+      <VideoSection video={video} relatedVideos={relatedVideos} />
     </div>
   );
 };
@@ -45,10 +40,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!video) {
     return { redirect: { destination: "/", permanent: true } };
   }
-
+  const models = video.models.map((model: string) => model.toLowerCase());
+  const relatedVideos = await searchRelatedVideos(
+    video.id,
+    models,
+    3,
+    videoPreviewSelector
+  );
   return {
     props: {
       video: toJson(video),
+      relatedVideos: toJson(relatedVideos),
     },
   };
 };

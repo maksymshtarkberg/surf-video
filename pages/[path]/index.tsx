@@ -57,7 +57,7 @@ const NavPage: NextPage<Props> = ({ videos, tags, role, page }) => {
 
   return (
     <div
-      className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0 py-12"
+      className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0"
       id="cams"
     >
       <VideosSection headline={"TOP / NEW"} videos={paginatedVideos} />
