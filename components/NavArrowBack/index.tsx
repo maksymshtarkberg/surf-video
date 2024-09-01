@@ -10,6 +10,7 @@ const NavArrow = () => {
       {router.asPath != "/" && (
         <div className="py-2 relative 2xl:-left-[15%] xl:-left-[5%] md:left-0">
           <Button
+            classTlw="md:bg-primary"
             text="Back"
             outline={true}
             onClickHandler={() => router.back()}

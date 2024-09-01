@@ -7,14 +7,25 @@ type Props = {
   outline?: boolean;
   href?: string;
   onClickHandler?: () => void;
+  classTlw?: string;
 };
 
-const Button: FC<Props> = ({ text, onClickHandler, href, outline = false }) => {
+const Button: FC<Props> = ({
+  text,
+  onClickHandler,
+  href,
+  outline = false,
+  classTlw,
+}) => {
   let className = classNames(
-    "py-2 px-4 sm:px-6 md:px-8 lg:px-10 text-sm sm:text-base md:text-md font-medium rounded-md bg-transparent border-2 border-white hover:bg-secondary hover:text-main w-full sm:w-auto shadow-md transition duration-300 cursor-pointer",
+    `${
+      classTlw ?? ""
+    } py-2 px-4 sm:px-6 md:px-8 lg:px-10 text-sm sm:text-base md:text-md font-medium rounded-md border-2 border-white hover:bg-secondary hover:text-main w-full sm:w-auto shadow-md transition duration-300 cursor-pointer`,
     outline
-      ? "border-2 border-primary bg-transparent text-main hover:text-main"
-      : "border border-transparent bg-secondary text-white"
+      ? `border-2 border-primary lg:bg-transparent ${
+          classTlw ?? ""
+        } text-main hover:text-main`
+      : `border border-transparent lg:bg-secondary ${classTlw ?? ""} text-white`
   );
 
   const buttonJSX = (

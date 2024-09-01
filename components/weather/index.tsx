@@ -188,7 +188,7 @@ const WeatherComponent: React.FC<Props> = ({ weatherData }) => {
                   <p className="text-lg font-bold leading-6 tracking-normal whitespace-nowrap text-gray-900">
                     {data.direction}
                   </p>
-                  <div className="w-3 h-3 leading-6 tracking-normal whitespace-nowrap text-gray-900">
+                  <div className=" text-gray-900">
                     {getWindDirectionArrow(data.direction)}
                   </div>
                 </div>
