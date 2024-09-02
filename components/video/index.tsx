@@ -51,7 +51,7 @@ const VideoSection: FC<Props> = ({ video, relatedVideos }) => {
         </h1>
 
         <div className="w-full flex flex-col text-main">
-          <VideoPlayer />
+          {/* <VideoPlayer /> */}
         </div>
       </section>
       <VideosSection

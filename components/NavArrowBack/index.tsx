@@ -5,15 +5,24 @@ import { useRouter } from "next/router";
 const NavArrow = () => {
   const router = useRouter();
 
+  const handleBackClick = () => {
+    console.log(router.asPath);
+    if (router.pathname === "/") {
+      router.push("/");
+    } else {
+      router.back();
+    }
+  };
+
   return (
     <>
-      {router.asPath != "/" && (
+      {router.pathname != "/" && (
         <div className="py-2 relative 2xl:-left-[15%] xl:-left-[5%] md:left-0">
           <Button
             classTlw="md:bg-primary"
             text="Back"
             outline={true}
-            onClickHandler={() => router.back()}
+            onClickHandler={handleBackClick}
           />
           <svg
             className="w-5 h-5 transform rotate-90 absolute bottom-[20px] 2xl:left-[15px] xl:left-[5px] md:left-0"

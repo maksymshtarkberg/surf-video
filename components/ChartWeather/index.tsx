@@ -43,11 +43,9 @@ type WaveHeightChartProps = {
 };
 
 const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(today.getDate() - 1);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  const [activeChart, setActiveChart] = useState<"history" | "forecast">(
+    "history"
+  );
 
   const historyData = data.history.map((item) => ({
     x: new Date(item.date).toISOString(),
@@ -71,6 +69,7 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
       },
     ],
   };
+
   const chartDataFuture = {
     datasets: [
       {
@@ -113,8 +112,8 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
           callback: (value: any, index: number, values: any) => {
             const date = new Date(value);
 
-            if (date.toDateString() === yesterday.toDateString()) {
-              return "Yesterday";
+            if (date.toDateString() === new Date().toDateString()) {
+              return "Today";
             }
             const options = { month: "short", day: "numeric" } as const;
 
@@ -139,12 +138,49 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mt-5">Wave Height Previous Weeks</h2>
-      <Line data={chartDataPrev} options={options} />
-      <h2 className="text-xl font-bold mt-5">Wave Height Next Week</h2>
-      <Line data={chartDataFuture} options={options} />
-    </div>
+    <>
+      <div className="relative my-10 flex justify-between">
+        <button
+          onClick={() => setActiveChart("history")}
+          className={`px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-left-[17%] ${
+            activeChart === "history" ? "bg-blue-700" : "bg-blue-500"
+          } text-white`}
+        >
+          Show Prev Weeks
+        </button>
+        <button
+          onClick={() => setActiveChart("forecast")}
+          className={`px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-right-[16%] ${
+            activeChart === "forecast" ? "bg-red-700" : "bg-red-500"
+          } text-white`}
+        >
+          Show Next Week
+        </button>
+      </div>
+
+      <div className="relative h-full w-full my-6 overflow-hidden">
+        <div
+          className={`transition-transform duration-500 ease-in-out overflow-hidden ${
+            activeChart === "history"
+              ? "transform translate-x-0 opacity-100 relative w-full h-full"
+              : "transform translate-x-full opacity-0 absolute w-0 h-0"
+          } absolute inset-0`}
+        >
+          <h2 className="text-xl font-bold mb-4">Wave Height Previous Weeks</h2>
+          <Line data={chartDataPrev} options={options} />
+        </div>
+        <div
+          className={`transition-transform duration-500 ease-in-out overflow-hidden ${
+            activeChart === "forecast"
+              ? "transform translate-x-0 opacity-100 relative w-full h-full"
+              : "transform -translate-x-full opacity-0 absolute w-0 h-0"
+          } absolute inset-0`}
+        >
+          <h2 className="text-xl font-bold mb-4">Wave Height Next Week</h2>
+          <Line data={chartDataFuture} options={options} />
+        </div>
+      </div>
+    </>
   );
 };
 
