@@ -16,25 +16,38 @@ const Nav = () => {
     handleResize();
 
     window.addEventListener("resize", handleResize);
-    console.log(isScreenLarge);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   const handleBackClick = () => {
-    console.log(router.asPath);
-    if (router.pathname === "/") {
+    const previousUrl = document.URL;
+    console.log(previousUrl);
+    console.log(window.location.hostname);
+    console.log(previousUrl.includes(window.location.hostname));
+    console.log(window.history);
+    if (
+      router.pathname === "/" ||
+      router.pathname === "" ||
+      window.history.length <= 2
+    ) {
       router.push("/");
-    } else {
+    } else if (previousUrl && previousUrl.includes(window.location.hostname)) {
       router.back();
+    } else {
+      router.push("/");
     }
+  };
+
+  const handleHomeClick = () => {
+    router.push("/");
   };
 
   return (
     <>
       {router.pathname != "/" && (
-        <div className="py-2 relative 2xl:-left-[15%] xl:-left-[5%] md:left-0">
+        <div className="py-2 flex relative 2xl:-left-[15%] xl:-left-[5%] md:left-0">
           <Button
             classTlw="md:bg-primary"
             text="Back"
@@ -55,6 +68,12 @@ const Nav = () => {
               d="M19 9l-7 7-7-7"
             ></path>
           </svg>
+          <Button
+            text="Home"
+            outline={false}
+            onClickHandler={handleHomeClick}
+            classTlw="ml-4"
+          />
         </div>
       )}
       {isScreenLarge && <NavLogIn />}

@@ -12,6 +12,8 @@ import {
 } from "chart.js";
 import dynamic from "next/dynamic";
 import "chartjs-adapter-date-fns";
+import { useRouter } from "next/router";
+import Button from "@ui/Button";
 
 const Line = dynamic(() => import("react-chartjs-2").then((mod) => mod.Line), {
   ssr: false,
@@ -43,6 +45,8 @@ type WaveHeightChartProps = {
 };
 
 const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
+  const router = useRouter();
+
   const [activeChart, setActiveChart] = useState<"history" | "forecast">(
     "history"
   );
@@ -140,40 +144,37 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
   return (
     <>
       <div className="relative my-10 flex justify-between">
-        <button
-          onClick={() => setActiveChart("history")}
-          className={`px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-left-[17%] ${
-            activeChart === "history" ? "bg-blue-700" : "bg-blue-500"
-          } text-white`}
-        >
-          Show Prev Weeks
-        </button>
-        <button
-          onClick={() => setActiveChart("forecast")}
-          className={`px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-right-[16%] ${
-            activeChart === "forecast" ? "bg-red-700" : "bg-red-500"
-          } text-white`}
-        >
-          Show Next Week
-        </button>
+        {activeChart === "forecast" && (
+          <button
+            onClick={() => setActiveChart("history")}
+            className="px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-left-[17%] bg-blue-500
+             text-white"
+          >
+            Show Prev Weeks
+          </button>
+        )}
+        {activeChart != "forecast" && (
+          <button
+            onClick={() => setActiveChart("forecast")}
+            className="px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-right-[16%] bg-red-500 text-white"
+          >
+            Show Next Week
+          </button>
+        )}
       </div>
 
-      <div className="relative h-full w-full my-6 overflow-hidden">
+      <div className="relative h-[500px] w-full my-6">
         <div
-          className={`transition-transform duration-500 ease-in-out overflow-hidden ${
-            activeChart === "history"
-              ? "transform translate-x-0 opacity-100 relative w-full h-full"
-              : "transform translate-x-full opacity-0 absolute w-0 h-0"
+          className={`transition-opacity duration-500 ease-in-out ${
+            activeChart === "history" ? "opacity-100 z-10" : "opacity-0 z-0"
           } absolute inset-0`}
         >
           <h2 className="text-xl font-bold mb-4">Wave Height Previous Weeks</h2>
           <Line data={chartDataPrev} options={options} />
         </div>
         <div
-          className={`transition-transform duration-500 ease-in-out overflow-hidden ${
-            activeChart === "forecast"
-              ? "transform translate-x-0 opacity-100 relative w-full h-full"
-              : "transform -translate-x-full opacity-0 absolute w-0 h-0"
+          className={`transition-opacity duration-500 ease-in-out ${
+            activeChart === "forecast" ? "opacity-100 z-10" : "opacity-0 z-0"
           } absolute inset-0`}
         >
           <h2 className="text-xl font-bold mb-4">Wave Height Next Week</h2>

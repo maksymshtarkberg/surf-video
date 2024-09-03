@@ -8,11 +8,11 @@
     --bg-primary: 208, 216, 255;
     --bg-secondary: 208, 216, 255;
 
-    --text-main: 26, 34, 43;
+    --text-main: 50, 36, 36;
     /** for warm designs **/
-    --text-inverted: 43, 54, 65;
+    --text-inverted: 60, 43, 43;
     --text-color: 43, 54, 65;
-    --text-alternative: 43, 54, 65;
+    --text-alternative: 70, 55, 45;
 
     --border-primary: 208, 216, 255;
     --border-secondary: 253, 220, 138;

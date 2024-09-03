@@ -20,10 +20,10 @@ const Button: FC<Props> = ({
   let className = classNames(
     `${
       classTlw ?? ""
-    } bg-primary py-2 px-4 sm:px-6 md:px-8 lg:px-10 text-sm sm:text-base md:text-md font-medium rounded-md border-2 border-white hover:bg-secondary hover:text-main w-full sm:w-auto shadow-md transition duration-300 cursor-pointer`,
+    } bg-primary py-2 px-4 sm:px-6 md:px-8 lg:px-10 text-sm sm:text-base md:text-md font-medium rounded-md border-2 border-white hover:bg-secondary hover:text-white w-full sm:w-auto shadow-md transition duration-300 cursor-pointer`,
     outline
-      ? `border-2 border-primary lg:bg-transparent text-main hover:text-main`
-      : `border border-transparent lg:bg-secondary text-white`
+      ? `border-2 border-primary lg:bg-transparent text-inverted hover:text-white`
+      : `border border-transparent lg:bg-secondary text-inverted`
   );
 
   const buttonJSX = (

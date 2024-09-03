@@ -9,7 +9,8 @@ import { fetchAds } from "lib/contentful";
 import VideoPlayer from "./VideoPlayer";
 import VideosSection from "components/videos/VideosSection";
 import WeatherComponent from "components/weather";
-
+import Button from "@ui/Button";
+import { useRouter } from "next/router";
 type Props = {
   video: Video;
   relatedVideos: Video[];
@@ -43,16 +44,21 @@ const weatherData = [
 ];
 
 const VideoSection: FC<Props> = ({ video, relatedVideos }) => {
+  const router = useRouter();
+
+  const handleRouter = () => {
+    router.push(`${video.slug}/cut`);
+  };
   return (
     <>
       <section className="mt-1">
         <h1 className="font-semibold text-xl md:text-4xl text-center">
           {video.title}
         </h1>
-
         <div className="w-full flex flex-col text-main">
           {/* <VideoPlayer /> */}
         </div>
+        <Button text="Cut" onClickHandler={handleRouter} />
       </section>
       <VideosSection
         headline="Related Videos"
