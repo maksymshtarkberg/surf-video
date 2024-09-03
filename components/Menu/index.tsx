@@ -211,13 +211,11 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
                           >
                             {videos.map(({ slug, title }) => (
                               <Link
+                                key={slug}
                                 href={buildVideoUrl(slug)}
                                 className="block truncate"
                               >
-                                <li
-                                  key={slug}
-                                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                                >
+                                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                                   {title}
                                 </li>
                               </Link>
