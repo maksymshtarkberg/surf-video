@@ -92,9 +92,9 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
   }, [isMenuOpen]);
 
   return (
-    <div className="relative z-10">
+    <div className="relative z-10 lg:block hidden">
       {!isMenuOpen && (
-        <div className="absolute bottom-[25px] 2xl:-left-[15%] xl:-left-[5%] lg:block hidden transition">
+        <div className="absolute bottom-[25px] 2xl:-left-[15%] xl:-left-[5%]  transition">
           <Button
             text="Menu"
             outline={true}
@@ -210,17 +210,17 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
                             onMouseLeave={handleMouseLeaveVideoList}
                           >
                             {videos.map(({ slug, title }) => (
-                              <li
-                                key={slug}
-                                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                              <Link
+                                href={buildVideoUrl(slug)}
+                                className="block truncate"
                               >
-                                <Link
-                                  href={buildVideoUrl(slug)}
-                                  className="block truncate"
+                                <li
+                                  key={slug}
+                                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                                 >
                                   {title}
-                                </Link>
-                              </li>
+                                </li>
+                              </Link>
                             ))}
                           </ul>,
                           document.body

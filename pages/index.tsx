@@ -13,6 +13,7 @@ import { getPopularTags } from "@db/services/tags.service";
 import { toplist } from "tube.config";
 import Menu from "components/Menu";
 import Navbar from "components/navbar";
+import NavMobile from "components/navbar/NavMobile";
 
 type Props = {
   videos: Video[];
@@ -57,7 +58,7 @@ const HomePage: NextPage<Props> = ({ videos, models, videosByCity }) => {
       id="cams"
     >
       <Menu cities={models} videosByCity={videosByCity} />
-
+      <NavMobile videosByCity={videosByCity} />
       <VideosSection
         headline="Latest Videos"
         variant="h2"

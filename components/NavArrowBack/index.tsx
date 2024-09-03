@@ -1,9 +1,26 @@
 import Button from "@ui/Button";
 import NavLogIn from "components/navbar/NavLogin";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
-const NavArrow = () => {
+const Nav = () => {
   const router = useRouter();
+
+  const [isScreenLarge, setIsScreenLarge] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsScreenLarge(window.innerWidth >= 1024);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    console.log(isScreenLarge);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleBackClick = () => {
     console.log(router.asPath);
@@ -40,9 +57,9 @@ const NavArrow = () => {
           </svg>
         </div>
       )}
-      <NavLogIn />
+      {isScreenLarge && <NavLogIn />}
     </>
   );
 };
 
-export default NavArrow;
+export default Nav;
