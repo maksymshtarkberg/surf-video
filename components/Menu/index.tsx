@@ -69,11 +69,11 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
 
       <div
         ref={menuRef}
-        className={`fixed top-0 left-0 z-40 h-screen p-4 transition-transform bg-white dark:bg-gray-800
+        className={`fixed top-0 left-0 z-40 h-screen p-4 transition-transform bg-white
         ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}
         lg:w-72 xl:w-80`}
       >
-        <h5 className="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">
+        <h5 className="text-base font-semibold text-gray-500 uppercase ">
           Menu
         </h5>
         <button
@@ -193,7 +193,7 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
             <li>
               <a
                 href="#"
-                className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
+                className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100"
               >
                 <AboutUs />
                 <span className="ml-3">About us</span>
@@ -203,7 +203,7 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
               <div className="m-1">
                 <a
                   href="#"
-                  className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
+                  className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100"
                 >
                   <SignIn />
                   <span className="ml-3">Sign In</span>
@@ -212,7 +212,7 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
               <div className="m-1">
                 <a
                   href="#"
-                  className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100 dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
+                  className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100"
                 >
                   <SignUp />
                   <span className="ml-3">Sign Up</span>
