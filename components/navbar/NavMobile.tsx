@@ -114,7 +114,7 @@ const NavMobile: React.FC<Props> = ({ videosByCity }) => {
                 ref={dropdownRef}
                 className="absolute z-10 font-normal bg-white divide-gray-100 rounded-lg shadow w-44"
               >
-                <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+                <ul className="py-2 text-sm text-main ">
                   {videosByCity.map(({ city, videos }) => (
                     <li
                       key={city}
