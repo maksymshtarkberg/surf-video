@@ -25,23 +25,23 @@ const authorize = async () => {
  */
 
 const VideoPlayer = () => {
-  const [authorized, setAuthorized] = useState(false);
+  // const [authorized, setAuthorized] = useState(false);
 
-  useEffect(() => {
-    authorize()
-      .then(() => setAuthorized(true))
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   authorize()
+  //     .then(() => setAuthorized(true))
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // }, []);
 
-  if (!authorized) {
-    return <div>authenticating...</div>;
-  }
+  // if (!authorized) {
+  //   return <div>authenticating...</div>;
+  // }
 
   return (
     <div className="w-full h-[90vh] flex flex-col items-center">
-      {authorized ? (
+      {/* {authorized ? (
         <Player
           hostname="195.60.68.14:12025"
           initialFormat="RTP_H264"
@@ -51,7 +51,15 @@ const VideoPlayer = () => {
         />
       ) : (
         <div>Failed to load video</div>
-      )}
+      )} */}
+      <video
+        // ref={videoRef}
+        src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        controls
+        // onTimeUpdate={handleTimeUpdate}
+        // onLoadedMetadata={handleLoadedMetadata}
+        style={{ width: "100%", height: "auto" }}
+      ></video>
     </div>
   );
 };
