@@ -112,7 +112,7 @@ const NavMobile: React.FC<Props> = ({ videosByCity }) => {
             {isDropdownOpen && (
               <div
                 ref={dropdownRef}
-                className="absolute z-10 font-normal bg-white divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+                className="absolute z-10 font-normal bg-white divide-gray-100 rounded-lg shadow w-44"
               >
                 <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
                   {videosByCity.map(({ city, videos }) => (
