@@ -57,7 +57,11 @@ const HomePage: NextPage<Props> = ({ videos, models, videosByCity }) => {
       className="container max-w-5xl mx-auto min-h-screen px-2 lg:px-0"
       id="cams"
     >
-      <Menu cities={models} videosByCity={videosByCity} />
+      <Menu
+        cities={models}
+        videosByCity={videosByCity}
+        btnPosition="absolute bottom-[25px] 2xl:-left-[15%] xl:-left-[5%]"
+      />
       <NavMobile videosByCity={videosByCity} />
       <VideosSection
         headline="Latest Videos"

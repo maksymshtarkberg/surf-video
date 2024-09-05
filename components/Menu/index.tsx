@@ -6,11 +6,13 @@ import Button from "@ui/Button";
 import { AboutUs, CitiesSVG, SignIn, SignUp } from "@ui/MenuIcons";
 
 type Props = {
-  cities: string[];
+  cities?: string[];
   videosByCity: {
     city: string;
     videos: VideoTitle;
   }[];
+  classNameTlw?: string;
+  btnPosition?: string;
 };
 
 type VideoTitle = {
@@ -18,7 +20,12 @@ type VideoTitle = {
   title: string;
 }[];
 
-const Menu: FC<Props> = ({ cities, videosByCity }) => {
+const Menu: FC<Props> = ({
+  cities,
+  videosByCity,
+  classNameTlw,
+  btnPosition,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openCity, setOpenCity] = useState<string | null>(null);
   const [isCitiesOpen, setIsCitiesOpen] = useState(false);
@@ -55,10 +62,26 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobile && isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      if (isMobile) {
+        document.body.style.overflow = "";
+      }
+    };
+  }, [isMenuOpen]);
+
   return (
-    <div className="relative z-10 lg:block hidden">
+    <div className="relative z-10 lg:block self-center">
       {!isMenuOpen && (
-        <div className="absolute bottom-[25px] 2xl:-left-[15%] xl:-left-[5%] transition">
+        <div className={`${btnPosition} transition`}>
           <Button
             text="Menu"
             outline={true}
@@ -69,7 +92,7 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
 
       <div
         ref={menuRef}
-        className={`fixed top-0 left-0 z-40 h-screen p-4 transition-transform bg-white
+        className={`fixed top-0 left-0 z-40 h-screen ${classNameTlw} p-4 transition-transform bg-gray-100
         ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}
         lg:w-72 xl:w-80`}
       >
@@ -83,7 +106,7 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
         >
           <svg
             aria-hidden="true"
-            className="w-5 h-5"
+            className="w-5 h-5 text-black"
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -98,11 +121,20 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
         </button>
         <div className="py-4 overflow-y-auto">
           <ul className="flex flex-col space-y-2 h-[89vh]">
+            <li>
+              <a
+                href="#"
+                className="flex items-center p-3 rounded-lg text-inverted border-primary border-2 bg-gray-50 hover:bg-background"
+              >
+                <AboutUs />
+                <span className="ml-3">About us</span>
+              </a>
+            </li>
             <li className="relative transition">
               <button
                 onClick={handleCitiesToggle}
-                className={`flex items-center justify-between w-full p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100 border-b-4${
-                  isCitiesOpen ? "border-none" : ""
+                className={`flex items-center justify-between w-full p-3 rounded-lg border-primary text-inverted bg-gray-50 hover:bg-background border-b-4 ${
+                  isCitiesOpen ? "border-2 border-b-[3px]" : ""
                 }`}
               >
                 <CitiesSVG />
@@ -136,13 +168,15 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
                   {videosByCity.map(({ city, videos }) => (
                     <li
                       key={city}
-                      className="relative border-solid border-2 border-primary rounded-lg mt-1"
+                      className="relative border-solid border-[1px] border-primary rounded-lg mt-1 bg-gray-50"
                     >
                       <button
                         onClick={() => handleCityClick(city)}
-                        className={`flex items-center justify-between p-3 rounded-sm w-full text-left border-b-2 border-b-primary ${
-                          openCity === city ? "bg-secondary border-none" : ""
-                        } hover:bg-secondary`}
+                        className={`flex items-center justify-between p-3 rounded-lg w-full text-left  border-b-primary ${
+                          openCity === city
+                            ? "bg-primary border-primary border-2 border-b-[3px] bg-opacity-70 hover:bg-primary"
+                            : "hover:bg-background border-b-4"
+                        } `}
                       >
                         <span
                           className={`block ${
@@ -169,15 +203,15 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
                         </svg>
                       </button>
                       <div
-                        className={`overflow-hidden transition-max-height duration-300 ease-in-out ${
+                        className={`overflow-hidden transition-max-height duration-300 ease-in-out bg-gray-100 ${
                           openCity === city ? "max-h-[300px]" : "max-h-0"
                         }`}
                       >
-                        <ul className="z-40 bg-gray-100 max-h-60 overflow-y-auto mt-1 rounded-lg overflow-hidden shadow-md">
+                        <ul className="flex flex-col z-40 bg-gray-50 bg-opacity-20 max-h-60 overflow-y-auto mt-1 rounded-lg overflow-hidden shadow-md gap-2">
                           {videos.map(({ slug, title }) => (
                             <li key={slug} className="block cursor-pointer">
                               <Link href={buildVideoUrl(slug)}>
-                                <p className="block px-4 py-2 text-gray-700 hover:bg-white truncate rounded-lg">
+                                <p className="block px-4 py-2 text-inverted hover:text-main  hover:bg-primary hover:bg-opacity-40 truncate rounded-lg">
                                   {title}
                                 </p>
                               </Link>
@@ -190,20 +224,12 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
                 </ul>
               </div>
             </li>
-            <li>
-              <a
-                href="#"
-                className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100"
-              >
-                <AboutUs />
-                <span className="ml-3">About us</span>
-              </a>
-            </li>
+
             <li style={{ marginTop: "auto" }}>
               <div className="m-1">
                 <a
                   href="#"
-                  className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100"
+                  className="flex items-center p-3 rounded-lg text-inverted border-primary border-2 bg-gray-50 hover:bg-background"
                 >
                   <SignIn />
                   <span className="ml-3">Sign In</span>
@@ -212,7 +238,7 @@ const Menu: FC<Props> = ({ cities, videosByCity }) => {
               <div className="m-1">
                 <a
                   href="#"
-                  className="flex items-center p-3 rounded-lg text-gray-900 bg-gray-50 hover:bg-gray-100"
+                  className="flex items-center p-3 rounded-lg text-inverted border-primary border-2 bg-gray-50 hover:bg-background"
                 >
                   <SignUp />
                   <span className="ml-3">Sign Up</span>
