@@ -86,7 +86,25 @@ const Menu: FC<Props> = ({
             text="Menu"
             outline={true}
             onClickHandler={() => setIsMenuOpen(!isMenuOpen)}
-          />
+            classTlw="flex items-center justify-between"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              width="24px"
+              height="24px"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="lg:mr-3 md:mr-2 mr-1"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            </svg>
+          </Button>
         </div>
       )}
 
@@ -133,8 +151,10 @@ const Menu: FC<Props> = ({
             <li className="relative transition">
               <button
                 onClick={handleCitiesToggle}
-                className={`flex items-center justify-between w-full p-3 rounded-lg border-primary text-inverted bg-gray-50 hover:bg-background border-b-4 ${
-                  isCitiesOpen ? "border-2 border-b-[3px]" : ""
+                className={`flex items-center justify-between w-full p-3 rounded-lg border-primary text-inverted  hover:bg-background border-b-4 ${
+                  isCitiesOpen
+                    ? "border-2 border-b-[3px] bg-background "
+                    : "bg-gray-50"
                 }`}
               >
                 <CitiesSVG />
@@ -164,7 +184,7 @@ const Menu: FC<Props> = ({
                   isCitiesOpen ? "max-h-[600px]" : "max-h-0"
                 }`}
               >
-                <ul className="mt-2 rounded-lg overflow-hidden shadow-md">
+                <ul className="mt-2 rounded-lg overflow-hidden shadow-sm">
                   {videosByCity.map(({ city, videos }) => (
                     <li
                       key={city}
@@ -203,13 +223,18 @@ const Menu: FC<Props> = ({
                         </svg>
                       </button>
                       <div
-                        className={`overflow-hidden transition-max-height duration-300 ease-in-out bg-gray-100 ${
-                          openCity === city ? "max-h-[300px]" : "max-h-0"
+                        className={`overflow-hidden transition-max-height duration-300 ease-in-out bg-gray-100  ${
+                          openCity === city
+                            ? "max-h-[300px] bg-transparent"
+                            : "max-h-0"
                         }`}
                       >
                         <ul className="flex flex-col z-40 bg-gray-50 bg-opacity-20 max-h-60 overflow-y-auto mt-1 rounded-lg overflow-hidden shadow-md gap-2">
                           {videos.map(({ slug, title }) => (
-                            <li key={slug} className="block cursor-pointer">
+                            <li
+                              key={slug}
+                              className="block cursor-pointer rounded-lg"
+                            >
                               <Link href={buildVideoUrl(slug)}>
                                 <p className="block px-4 py-2 text-inverted hover:text-main  hover:bg-primary hover:bg-opacity-40 truncate rounded-lg">
                                   {title}
