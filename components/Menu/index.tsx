@@ -137,8 +137,8 @@ const Menu: FC<Props> = ({
           </svg>
           <span className="sr-only">Close menu</span>
         </button>
-        <div className="py-4 overflow-y-auto">
-          <ul className="flex flex-col space-y-2 h-[89vh]">
+        <div className="py-4 overflow-y-auto h-full">
+          <ul className="flex flex-col space-y-2 h-full">
             <li>
               <a
                 href="#"
