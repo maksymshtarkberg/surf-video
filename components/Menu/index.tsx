@@ -110,7 +110,7 @@ const Menu: FC<Props> = ({
 
       <div
         ref={menuRef}
-        className={`fixed top-0 left-0 z-40 h-screen ${classNameTlw} p-4 transition-transform bg-gray-100
+        className={`fixed flex flex-col top-0 left-0 z-40 h-full ${classNameTlw} p-4 transition-transform bg-gray-100
         ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}
         lg:w-72 xl:w-80`}
       >
@@ -137,8 +137,8 @@ const Menu: FC<Props> = ({
           </svg>
           <span className="sr-only">Close menu</span>
         </button>
-        <div className="py-4 overflow-y-auto h-full">
-          <ul className="flex flex-col space-y-2 h-full">
+        <div className="py-4 overflow-y-auto">
+          <ul className="flex flex-col space-y-2 ">
             <li>
               <a
                 href="#"
@@ -249,28 +249,26 @@ const Menu: FC<Props> = ({
                 </ul>
               </div>
             </li>
-
-            <li style={{ marginTop: "auto" }}>
-              <div className="m-1">
-                <a
-                  href="#"
-                  className="flex items-center p-3 rounded-lg text-inverted border-primary border-2 bg-gray-50 hover:bg-background"
-                >
-                  <SignIn />
-                  <span className="ml-3">Sign In</span>
-                </a>
-              </div>
-              <div className="m-1">
-                <a
-                  href="#"
-                  className="flex items-center p-3 rounded-lg text-inverted border-primary border-2 bg-gray-50 hover:bg-background"
-                >
-                  <SignUp />
-                  <span className="ml-3">Sign Up</span>
-                </a>
-              </div>
-            </li>
           </ul>
+        </div>
+        <div
+          className="flex flex-col space-y-2 mt-4 justify-end"
+          style={{ marginTop: "auto" }}
+        >
+          <a
+            href="#"
+            className="flex items-center p-3 rounded-lg text-inverted border-primary border-2 bg-gray-50 hover:bg-background"
+          >
+            <SignIn />
+            <span className="ml-3">Sign In</span>
+          </a>
+          <a
+            href="#"
+            className="flex items-center p-3 rounded-lg text-inverted border-primary border-2 bg-gray-50 hover:bg-background"
+          >
+            <SignUp />
+            <span className="ml-3">Sign Up</span>
+          </a>
         </div>
       </div>
     </div>
