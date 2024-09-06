@@ -13,7 +13,6 @@ import {
 import dynamic from "next/dynamic";
 import "chartjs-adapter-date-fns";
 import { useRouter } from "next/router";
-import Button from "@ui/Button";
 
 const Line = dynamic(() => import("react-chartjs-2").then((mod) => mod.Line), {
   ssr: false,
@@ -47,9 +46,9 @@ type WaveHeightChartProps = {
 const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
   const router = useRouter();
 
-  const [activeChart, setActiveChart] = useState<"history" | "forecast">(
-    "history"
-  );
+  const [activeChart, setActiveChart] = useState<
+    "history" | "forecast" | "combined"
+  >("history");
 
   const historyData = data.history.map((item) => ({
     x: new Date(item.date).toISOString(),
@@ -60,6 +59,25 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
     x: new Date(item.date).toISOString(),
     y: item.waveHeight,
   }));
+
+  const combinedData = [
+    {
+      label: "Wave Height History",
+      data: historyData,
+      borderColor: "blue",
+      backgroundColor: "rgba(0, 0, 255, 0.2)",
+      fill: true,
+      tension: 0.4,
+    },
+    {
+      label: "Wave Height Forecast",
+      data: forecastData,
+      borderColor: "red",
+      backgroundColor: "rgba(255, 0, 0, 0.2)",
+      fill: true,
+      tension: 0.4,
+    },
+  ];
 
   const chartDataPrev = {
     datasets: [
@@ -144,16 +162,23 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
   return (
     <>
       <div className="relative my-10 flex justify-between">
-        {activeChart === "forecast" && (
+        {activeChart !== "combined" && (
+          <button
+            onClick={() => setActiveChart("combined")}
+            className="px-4 py-2 rounded bg-green-500 text-white"
+          >
+            Show Combined
+          </button>
+        )}
+        {(activeChart === "forecast" || activeChart === "combined") && (
           <button
             onClick={() => setActiveChart("history")}
-            className="px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-left-[17%] bg-blue-500
-             text-white"
+            className="px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-left-[17%] bg-blue-500 text-white"
           >
             Show Prev Weeks
           </button>
         )}
-        {activeChart != "forecast" && (
+        {(activeChart === "history" || activeChart === "combined") && (
           <button
             onClick={() => setActiveChart("forecast")}
             className="px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-right-[16%] bg-red-500 text-white"
@@ -179,6 +204,14 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
         >
           <h2 className="text-xl font-bold mb-4">Wave Height Next Week</h2>
           <Line data={chartDataFuture} options={options} />
+        </div>
+        <div
+          className={`transition-opacity duration-500 ease-in-out ${
+            activeChart === "combined" ? "opacity-100 z-10" : "opacity-0 z-0"
+          } absolute inset-0`}
+        >
+          <h2 className="text-xl font-bold mb-4">Combined Wave Height</h2>
+          <Line data={{ datasets: combinedData }} options={options} />
         </div>
       </div>
     </>

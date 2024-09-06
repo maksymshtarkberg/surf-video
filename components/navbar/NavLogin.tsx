@@ -5,7 +5,7 @@ const NavLogIn = () => {
     <div className="py-2 ml-auto relative  2xl:-right-[15%] xl:-right-[5%] md:right-0 ">
       <Button
         text="Subscribe"
-        outline={true}
+        outline={false}
         classTlw="sm:bg-primary flex items-center justify-between"
       >
         <svg
