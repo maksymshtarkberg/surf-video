@@ -1,22 +1,110 @@
+import Button from "@ui/Button";
+import PlayButtons from "components/PlayButtons/Play";
 import VideoCutAndDownload from "components/VideoCut&Download";
 import VideoListTimeline from "components/VideoListTimeline/VideoListTimeline";
 import { GetServerSideProps, NextPage } from "next";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { useRouter } from "next/router";
+import PreLoader from "components/PreLoader/PreLoader";
 
 type Props = {};
 
 const VideoCut: NextPage<Props> = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const [isCapturing, setIsCapturing] = useState<boolean>(false);
+  const [snapshots, setSnapshots] = useState<string[]>([]);
+
+  const saveSnapshotsToLocalStorage = (snapshotsArray: string[]) => {
+    localStorage.setItem("snapshots", JSON.stringify(snapshotsArray));
+  };
+
+  const loadSnapshotsFromLocalStorage = () => {
+    const storedSnapshots = localStorage.getItem("snapshots");
+    if (storedSnapshots) {
+      setSnapshots(JSON.parse(storedSnapshots));
+    }
+  };
+
+  const captureSnapshots = async (videoDuration: number) => {
+    setIsCapturing(true);
+    const videoElement = videoRef.current;
+    const canvasElement = canvasRef.current;
+    if (videoElement && canvasElement) {
+      const ctx = canvasElement.getContext("2d");
+      if (!ctx) {
+        console.error("Unable to get 2D context for canvas");
+        setIsCapturing(false);
+        return;
+      }
+
+      const wasPlaying = !videoElement.paused;
+      const originalTime = videoElement.currentTime;
+
+      videoElement.pause();
+
+      const snapshotIntervals = Math.min(Math.floor(videoDuration / 60), 10);
+      let snapshotsArray: string[] = [];
+
+      const captureFrame = (time: number): Promise<void> => {
+        return new Promise<void>((resolve) => {
+          videoElement.currentTime = time;
+
+          videoElement.onseeked = () => {
+            if (videoElement.readyState >= 2) {
+              ctx.drawImage(
+                videoElement,
+                0,
+                0,
+                canvasElement.width,
+                canvasElement.height
+              );
+              const imageDataURL = canvasElement.toDataURL("image/jpeg");
+              snapshotsArray.push(imageDataURL);
+              resolve();
+            } else {
+              resolve();
+            }
+          };
+        });
+      };
+
+      for (let i = 0; i <= snapshotIntervals; i++) {
+        await captureFrame(i * 60);
+      }
+
+      setSnapshots(snapshotsArray);
+      saveSnapshotsToLocalStorage(snapshotsArray);
+      videoElement.currentTime = originalTime;
+      if (wasPlaying) {
+        videoElement.play();
+      }
+    }
+    setIsCapturing(false);
+  };
 
   return (
     <div className="bg-slate-700">
-      <div className="container max-w-5xl mx-auto min-h-screen px-2 pb-10 lg:px-0 ">
-        <VideoCutAndDownload videoRef={videoRef} />
-        <div className="flex justify-between">
-          <VideoListTimeline />
-          <p>Play</p>
-          <p>Cut</p>
-        </div>
+      <div className="container max-w-5xl mx-auto min-h-screen px-2 pb-10 lg:px-0 relative">
+        {!isCapturing ? (
+          <PreLoader />
+        ) : (
+          <>
+            <VideoCutAndDownload
+              videoRef={videoRef}
+              canvasRef={canvasRef}
+              captureSnapshots={captureSnapshots}
+              loadSnapshotsFromLocalStorage={loadSnapshotsFromLocalStorage}
+              snapshots={snapshots}
+            />
+            <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10">
+              <VideoListTimeline />
+              <PlayButtons videoRef={videoRef} />
+              <Button text="Clip" />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
