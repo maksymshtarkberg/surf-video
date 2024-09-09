@@ -87,7 +87,7 @@ const VideoCut: NextPage<Props> = () => {
   return (
     <div className="bg-slate-700">
       <div className="container max-w-5xl mx-auto min-h-screen px-2 pb-10 lg:px-0 relative">
-        {!isCapturing ? (
+        {isCapturing ? (
           <PreLoader />
         ) : (
           <>
