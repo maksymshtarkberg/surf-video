@@ -31,6 +31,7 @@ const VideoCut: NextPage<Props> = () => {
     setIsCapturing(true);
     const videoElement = videoRef.current;
     const canvasElement = canvasRef.current;
+
     if (videoElement && canvasElement) {
       const ctx = canvasElement.getContext("2d");
       if (!ctx) {
@@ -44,6 +45,7 @@ const VideoCut: NextPage<Props> = () => {
 
       videoElement.pause();
 
+      // Количество кадров для захвата: не более 10 кадров, одно каждые 60 секунд
       const snapshotIntervals = Math.min(Math.floor(videoDuration / 60), 10);
       let snapshotsArray: string[] = [];
 
@@ -51,31 +53,49 @@ const VideoCut: NextPage<Props> = () => {
         return new Promise<void>((resolve) => {
           videoElement.currentTime = time;
 
-          videoElement.onseeked = () => {
-            if (videoElement.readyState >= 2) {
-              ctx.drawImage(
-                videoElement,
-                0,
-                0,
-                canvasElement.width,
-                canvasElement.height
-              );
-              const imageDataURL = canvasElement.toDataURL("image/jpeg");
-              snapshotsArray.push(imageDataURL);
-              resolve();
-            } else {
-              resolve();
-            }
+          // Используем небольшую задержку для корректной работы на iOS
+          const handleSeeked = () => {
+            setTimeout(() => {
+              if (videoElement.readyState >= 2) {
+                try {
+                  ctx.drawImage(
+                    videoElement,
+                    0,
+                    0,
+                    canvasElement.width,
+                    canvasElement.height
+                  );
+                  const imageDataURL = canvasElement.toDataURL("image/jpeg");
+                  snapshotsArray.push(imageDataURL);
+                } catch (error) {
+                  console.error("Error capturing snapshot: ", error);
+                }
+                resolve();
+              } else {
+                resolve(); // Готовность видео недостаточна, но не останавливаем процесс
+              }
+            }, 150); // Добавляем задержку для iOS (150 мс)
           };
+
+          // Проверяем готовность видео и его поддержку событий
+          if (videoElement.readyState >= 2) {
+            handleSeeked();
+          } else {
+            videoElement.onseeked = handleSeeked;
+          }
         });
       };
 
       for (let i = 0; i <= snapshotIntervals; i++) {
-        await captureFrame(i * 60);
+        // Android может лучше обрабатывать более точные интервалы времени
+        const snapshotTime = i * 59.9;
+        await captureFrame(snapshotTime);
       }
 
       setSnapshots(snapshotsArray);
       saveSnapshotsToLocalStorage(snapshotsArray);
+
+      // Возвращаем видео на исходное время и состояние
       videoElement.currentTime = originalTime;
       if (wasPlaying) {
         videoElement.play();

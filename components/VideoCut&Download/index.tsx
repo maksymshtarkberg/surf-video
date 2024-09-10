@@ -82,7 +82,7 @@ const VideoTrimmer: React.FC<Props> = ({
   }, []);
 
   const currentIndex = Math.floor((currentTime / duration) * snapshots.length);
-  const numDivisions = Math.ceil(duration / 20);
+  const numDivisions = Math.ceil(duration / 10);
   const numMinuteMarkers = Math.floor(duration / 60);
 
   return (
@@ -137,24 +137,24 @@ const VideoTrimmer: React.FC<Props> = ({
               }}
             ></div>
             {/* Timeline divisions */}
-            <div className="relative top-0 -left-[9px] w-full flex justify-start">
+            <div className="relative top-0 -left-[15px] w-full flex justify-start">
               {[...Array(numDivisions)].map((_, index) => {
                 const isMinuteMark = index % 3 === 0;
                 return (
                   <div
                     key={index}
-                    className={`h-${isMinuteMark ? "3" : "2"} border-t ${
+                    className={`h-${isMinuteMark ? "3" : "px"} border-t ${
                       isMinuteMark ? "border-primary" : "border-gray-500"
                     } rotate-90`}
                     style={{
-                      width: `${50 / numDivisions}%`,
+                      width: `${100 / numDivisions}%`,
                       marginLeft: index === 0 ? "0" : "auto",
                     }}
                   >
                     {isMinuteMark && (
                       <div className="relative md:text-xs text-[10px] text-white -rotate-90 left-3 bottom-1">
-                        {Math.floor((index * 20) / 60)}:
-                        {((index * 20) % 60).toString().padStart(2, "0")}
+                        {Math.floor((index * 10) / 60)}:
+                        {((index * 10) % 60).toString().padStart(2, "0")}
                       </div>
                     )}
                   </div>
