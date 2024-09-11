@@ -10,6 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ffmpeg/core": "^0.12.6",
+    "@ffmpeg/ffmpeg": "^0.12.10",
     "@heroicons/react": "^1.0.6",
     "@maptiler/sdk": "^2.2.2",
     "@next/bundle-analyzer": "^12.3.1",
@@ -29,6 +31,7 @@
     "react": "npm:@preact/compat@^17.1.2",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "npm:@preact/compat@^17.1.2",
+    "react-range": "^1.10.0",
     "react-ssr-prepass": "npm:preact-ssr-prepass@^1.2.0",
     "react-timeago": "^7.1.0",
     "seedrandom": "^3.0.5",
@@ -38,6 +41,7 @@
     "util": "^0.12.5"
   },
   "devDependencies": {
+    "@types/ffmpeg": "^1.0.7",
     "@types/mongoose": "^5.11.97",
     "@types/node": "18.11.0",
     "@types/react": "18.0.21",

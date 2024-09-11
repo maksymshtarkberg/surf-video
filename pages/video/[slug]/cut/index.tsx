@@ -1,11 +1,12 @@
 import Button from "@ui/Button";
 import PlayButtons from "components/PlayButtons/Play";
-import VideoCutAndDownload from "components/VideoCut&Download";
+import VideoTimeline from "components/VideoTimeline";
 import VideoListTimeline from "components/VideoListTimeline/VideoListTimeline";
 import { GetServerSideProps, NextPage } from "next";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import PreLoader from "components/PreLoader/PreLoader";
+import VideoTrimmer from "components/VideoTrimmer/VideoTrimmer";
 
 type Props = {};
 
@@ -14,6 +15,7 @@ const VideoCut: NextPage<Props> = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
+  const [openCut, setIsCutOpened] = useState<boolean>(false);
   const [snapshots, setSnapshots] = useState<string[]>([]);
 
   const saveSnapshotsToLocalStorage = (snapshotsArray: string[]) => {
@@ -27,11 +29,22 @@ const VideoCut: NextPage<Props> = () => {
     }
   };
 
+  const removeSnapshotsFromLocalStorage = () => {
+    localStorage.removeItem("snapshots");
+  };
+
   const captureSnapshots = async (videoDuration: number) => {
+    setSnapshots([]);
+    removeSnapshotsFromLocalStorage();
+
+    if (!videoDuration || isNaN(videoDuration) || videoDuration <= 0) {
+      console.error("Invalid video duration:", videoDuration);
+      return;
+    }
+
     setIsCapturing(true);
     const videoElement = videoRef.current;
     const canvasElement = canvasRef.current;
-
     if (videoElement && canvasElement) {
       const ctx = canvasElement.getContext("2d");
       if (!ctx) {
@@ -42,20 +55,18 @@ const VideoCut: NextPage<Props> = () => {
 
       const wasPlaying = !videoElement.paused;
       const originalTime = videoElement.currentTime;
-
       videoElement.pause();
 
-      // Количество кадров для захвата: не более 10 кадров, одно каждые 60 секунд
-      const snapshotIntervals = Math.min(Math.floor(videoDuration / 60), 10);
+      const snapshotIntervals = 10;
       let snapshotsArray: string[] = [];
 
       const captureFrame = (time: number): Promise<void> => {
         return new Promise<void>((resolve) => {
+          videoElement.onseeked = null;
           videoElement.currentTime = time;
 
-          // Используем небольшую задержку для корректной работы на iOS
           const handleSeeked = () => {
-            setTimeout(() => {
+            requestAnimationFrame(() => {
               if (videoElement.readyState >= 2) {
                 try {
                   ctx.drawImage(
@@ -72,12 +83,11 @@ const VideoCut: NextPage<Props> = () => {
                 }
                 resolve();
               } else {
-                resolve(); // Готовность видео недостаточна, но не останавливаем процесс
+                resolve();
               }
-            }, 150); // Добавляем задержку для iOS (150 мс)
+            });
           };
 
-          // Проверяем готовность видео и его поддержку событий
           if (videoElement.readyState >= 2) {
             handleSeeked();
           } else {
@@ -86,17 +96,15 @@ const VideoCut: NextPage<Props> = () => {
         });
       };
 
-      for (let i = 0; i <= snapshotIntervals; i++) {
-        // Android может лучше обрабатывать более точные интервалы времени
-        const snapshotTime = i * 59.9;
+      for (let i = 0; i < snapshotIntervals; i++) {
+        const snapshotTime = (videoDuration / snapshotIntervals) * i;
         await captureFrame(snapshotTime);
       }
 
-      setSnapshots(snapshotsArray);
       saveSnapshotsToLocalStorage(snapshotsArray);
+      loadSnapshotsFromLocalStorage();
 
-      // Возвращаем видео на исходное время и состояние
-      videoElement.currentTime = originalTime;
+      videoElement.currentTime = 0;
       if (wasPlaying) {
         videoElement.play();
       }
@@ -104,27 +112,29 @@ const VideoCut: NextPage<Props> = () => {
     setIsCapturing(false);
   };
 
+  const handleClipVideo = () => {
+    setIsCutOpened(!openCut);
+    videoRef.current?.pause();
+  };
+
   return (
     <div className="bg-slate-700">
       <div className="container max-w-5xl mx-auto min-h-screen px-2 pb-10 lg:px-0 relative">
-        {isCapturing ? (
-          <PreLoader />
-        ) : (
-          <>
-            <VideoCutAndDownload
-              videoRef={videoRef}
-              canvasRef={canvasRef}
-              captureSnapshots={captureSnapshots}
-              loadSnapshotsFromLocalStorage={loadSnapshotsFromLocalStorage}
-              snapshots={snapshots}
-            />
-            <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10">
-              <VideoListTimeline />
-              <PlayButtons videoRef={videoRef} />
-              <Button text="Clip" />
-            </div>
-          </>
-        )}
+        <VideoTimeline
+          videoRef={videoRef}
+          canvasRef={canvasRef}
+          captureSnapshots={captureSnapshots}
+          loadSnapshotsFromLocalStorage={loadSnapshotsFromLocalStorage}
+          snapshots={snapshots}
+          openCut={openCut}
+          removeSnapshotsFromLocalStorage={removeSnapshotsFromLocalStorage}
+        />
+
+        <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10">
+          <VideoListTimeline />
+          <PlayButtons videoRef={videoRef} />
+          <Button text="Clip" onClickHandler={handleClipVideo} />
+        </div>
       </div>
     </div>
   );

@@ -94,3 +94,15 @@ export const removePageFromPath = (path: string) => {
   if (pos === -1) return path;
   return path.substring(0, pos);
 };
+
+export const fileToUint8Array = (file: File | Blob): Promise<Uint8Array> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const arrayBuffer = reader.result as ArrayBuffer;
+      resolve(new Uint8Array(arrayBuffer));
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+};
