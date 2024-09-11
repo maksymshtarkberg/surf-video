@@ -194,7 +194,7 @@ const VideoTrimmer: React.FC<Props> = ({
           <Button
             text="Download"
             onClickHandler={handleDownload}
-            disabled={isProcessing || !downloadUrl}
+            disabled={!downloadUrl}
           />
         </div>
 
