@@ -27,6 +27,24 @@ const RangeSlider: React.FC<Props> = ({
     }
   }, [duration, minTime, maxTime]);
 
+  const handleRangeChange = (newValues: number[]) => {
+    setValues(newValues);
+    onRangeChange(newValues);
+
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      const [min, max] = newValues;
+
+      if (min !== values[0]) {
+        videoElement.currentTime = min;
+      }
+
+      if (max !== values[1]) {
+        videoElement.currentTime = max;
+      }
+    }
+  };
+
   return (
     <>
       <Range
@@ -34,10 +52,7 @@ const RangeSlider: React.FC<Props> = ({
         step={STEP}
         min={MIN}
         max={duration}
-        onChange={(newValues) => {
-          setValues(newValues);
-          onRangeChange(newValues);
-        }}
+        onChange={handleRangeChange}
         renderTrack={({ props, children }) => (
           <div
             {...props}

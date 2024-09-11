@@ -1,7 +1,9 @@
+import { TimelineIcon } from "@ui/TimelineIcon";
 import PreLoader from "components/PreLoader/PreLoader";
 import RangeSlider from "components/RangeSlider/RangeSlider";
 import VideoTrimmer from "components/VideoTrimmer/VideoTrimmer";
 import React, { useRef, useState, useEffect } from "react";
+import { formatTime } from "utils/helpers";
 
 type Props = {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -111,14 +113,6 @@ const VideoTimeline: React.FC<Props> = ({
 
   const currentIndex = Math.floor((currentTime / duration) * 10);
 
-  const formatTime = (timeInSeconds: number) => {
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = Math.floor(timeInSeconds % 60)
-      .toString()
-      .padStart(2, "0");
-    return `${minutes}:${seconds}`;
-  };
-
   return (
     <>
       <div className="flex flex-col items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 ">
@@ -156,7 +150,7 @@ const VideoTimeline: React.FC<Props> = ({
                 );
               })}
             </div>
-            {openCut && isLoadindCut && (
+            {isLoadindCut && (
               <div className="flex items-center space-x-4 mt-4">
                 <RangeSlider
                   videoRef={videoRef}
@@ -175,15 +169,17 @@ const VideoTimeline: React.FC<Props> = ({
               step="0.1"
               value={currentTime}
               onInput={handleSliderInput}
-              className="absolute w-full h-2/3 left-0 bottom-9 bg-transparent opacity-0 z"
+              className="absolute w-full h-2/3 left-0 bottom-9 bg-transparent opacity-0 cursor-pointer"
             />
             <div
-              className="absolute top-0 h-full w-1 bg-gray-300"
+              className="absolute top-0 h-[90%] w-1 bg-gray-300 rounded-md mt-4"
               style={{
                 left: `${(currentTime / duration) * 100}%`,
                 transform: "translateX(-50%)",
               }}
-            ></div>
+            >
+              <TimelineIcon />
+            </div>
 
             {/* Timeline divisions */}
             <div className="relative top-0 -left-[15px] w-full flex justify-start">
@@ -214,14 +210,11 @@ const VideoTimeline: React.FC<Props> = ({
           {openCut && (
             <VideoTrimmer
               videoRef={videoRef}
-              canvasRef={canvasRef}
               captureSnapshots={captureSnapshots}
-              snapshots={snapshots}
-              currentTime={currentTime}
-              removeSnapshotsFromLocalStorage={removeSnapshotsFromLocalStorage}
-              loadSnapshotsFromLocalStorage={loadSnapshotsFromLocalStorage}
               setIsLoadindCut={setIsLoadindCut}
               isLoadindCut={isLoadindCut}
+              minTime={minTime}
+              maxTime={maxTime}
             />
           )}
         </div>
