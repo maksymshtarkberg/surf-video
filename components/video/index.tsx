@@ -55,8 +55,21 @@ const VideoSection: FC<Props> = ({ video, relatedVideos }) => {
         <h1 className="font-semibold text-xl md:text-4xl text-center">
           {video.title}
         </h1>
-        <div className="w-full flex flex-col text-main">
-          <VideoPlayer />
+        <div className="w-full flex flex-col items-center text-main">
+          <video
+            // ref={videoRef}
+            onError={() => console.error("Error loading video")}
+            controls
+            crossOrigin="anonymous"
+            className="w-full max-w-4xl"
+            autoPlay
+          >
+            <source
+              src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+              type="video/mp4"
+            />
+          </video>
+          {/* <VideoPlayer /> */}
         </div>
         <div className="flex justify-end my-6">
           <Button

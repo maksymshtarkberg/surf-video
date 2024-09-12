@@ -19,21 +19,21 @@ const VideoPlayer: FC<Props> = ({ videoRef, duration }) => {
   const [authorized, setAuthorized] = useState(false);
   const format: Format = "RTP_H264" as Format;
 
-  useEffect(() => {
-    authorize()
-      .then(() => setAuthorized(true))
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   authorize()
+  //     .then(() => setAuthorized(true))
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // }, []);
 
-  if (!authorized) {
-    return <div>authenticating...</div>;
-  }
+  // if (!authorized) {
+  //   return <div>authenticating...</div>;
+  // }
 
   return (
     <div className="w-full h-[600px] flex flex-col items-center">
-      {authorized ? (
+      {/* {authorized ? (
         <Player
           hostname="195.60.68.14:11068"
           initialFormat={format}
@@ -44,7 +44,7 @@ const VideoPlayer: FC<Props> = ({ videoRef, duration }) => {
         />
       ) : (
         <div>Failed to load video</div>
-      )}
+      )} */}
     </div>
   );
 };

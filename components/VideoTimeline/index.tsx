@@ -40,12 +40,12 @@ const VideoTimeline: React.FC<Props> = ({
       const videoDuration = videoElement.duration;
       setDuration(videoDuration);
 
-      // if (!snapshotsCaptured) {
-      //   captureSnapshots(videoDuration)
-      //     .then(() => setSnapshotsCaptured(true))
-      //     .then(() => loadSnapshotsFromLocalStorage())
-      //     .catch((err) => console.error("Ошибка захвата снимков:", err));
-      // }
+      if (!snapshotsCaptured) {
+        captureSnapshots(videoDuration)
+          .then(() => setSnapshotsCaptured(true))
+          .then(() => loadSnapshotsFromLocalStorage())
+          .catch((err) => console.error("Ошибка захвата снимков:", err));
+      }
     }
   }, [videoRef.current?.src]);
 
@@ -120,7 +120,7 @@ const VideoTimeline: React.FC<Props> = ({
   return (
     <>
       <div className="flex flex-col items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 ">
-        {/* <video
+        <video
           ref={videoRef}
           onError={() => console.error("Error loading video")}
           controls
@@ -132,8 +132,8 @@ const VideoTimeline: React.FC<Props> = ({
             src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
             type="video/mp4"
           />
-        </video> */}
-        <VideoPlayer videoRef={videoRef} duration={duration} />
+        </video>
+        {/* <VideoPlayer videoRef={videoRef} duration={duration} /> */}
 
         <div className="relative w-full mt-4">
           <h2 className="text-base font-bold leading-4 text-white my-4">
