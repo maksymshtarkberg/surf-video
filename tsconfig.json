@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -16,12 +20,27 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@ui": ["components/ui"],
-      "@ui/*": ["components/ui/*"],
-      "@db": ["database/"],
-      "@db/*": ["database/*"]
+      "@ui": [
+        "components/ui"
+      ],
+      "@ui/*": [
+        "components/ui/*"
+      ],
+      "@db": [
+        "database/"
+      ],
+      "@db/*": [
+        "database/*"
+      ]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/video/VideoPlayer.jsx"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "components/video/VideoPlayer.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

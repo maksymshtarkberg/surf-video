@@ -183,9 +183,9 @@ const VideoTrimmer: React.FC<Props> = ({
 
   return (
     <>
-      <div className="flex flex-col items-center py-5 px-4">
+      <div className="flex items-center py-5 px-4 justify-between">
         <Button
-          text="Clip Video"
+          text="Select and Preview"
           onClickHandler={trimVideo}
           disabled={isProcessing || !fileReady || isClipDisabled}
         />
@@ -197,12 +197,24 @@ const VideoTrimmer: React.FC<Props> = ({
             disabled={!downloadUrl}
           />
         </div>
+      </div>
+      <div className="text-center">
+        {isProcessing && (
+          <p className="text-white">Processing video, please wait...</p>
+        )}
 
-        {isProcessing && <p>Processing video, please wait...</p>}
+        {!fileReady && (
+          <>
+            <span className="loading loading-ring loading-lg"></span>
+            <p className="text-white">Preparing video for cut: {progress}%</p>
+          </>
+        )}
 
-        {!fileReady && <p>Loading video: {progress}%</p>}
-
-        {fileReady && <p>File ready for cut</p>}
+        {fileReady && (
+          <p className="text-white">
+            File ready for {isClipDisabled ? "download" : "cut"}
+          </p>
+        )}
       </div>
     </>
   );

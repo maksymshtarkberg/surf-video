@@ -3,7 +3,7 @@ import React, { FC } from "react";
 import { classNames } from "utils/helpers";
 
 type Props = {
-  text: string;
+  text?: string;
   outline?: boolean;
   href?: string;
   onClickHandler?: () => void;

@@ -2,7 +2,8 @@ import { TimelineIcon } from "@ui/TimelineIcon";
 import PreLoader from "components/PreLoader/PreLoader";
 import RangeSlider from "components/RangeSlider/RangeSlider";
 import VideoTrimmer from "components/VideoTrimmer/VideoTrimmer";
-import React, { useRef, useState, useEffect } from "react";
+import VideoPlayer from "components/video/VideoPlayer";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { formatTime } from "utils/helpers";
 
 type Props = {
@@ -10,9 +11,9 @@ type Props = {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   captureSnapshots: (videoDuration: number) => Promise<void>;
   loadSnapshotsFromLocalStorage: () => void;
-  removeSnapshotsFromLocalStorage: () => void;
   snapshots: string[];
   openCut: boolean;
+  isCapturing: boolean;
 };
 
 const VideoTimeline: React.FC<Props> = ({
@@ -20,9 +21,9 @@ const VideoTimeline: React.FC<Props> = ({
   canvasRef,
   captureSnapshots,
   loadSnapshotsFromLocalStorage,
-  removeSnapshotsFromLocalStorage,
   snapshots,
   openCut,
+  isCapturing,
 }) => {
   const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -33,21 +34,24 @@ const VideoTimeline: React.FC<Props> = ({
   const [isLoadindCut, setIsLoadindCut] = useState<boolean>(false);
   const [snapshotsCaptured, setSnapshotsCaptured] = useState<boolean>(false);
 
+  const handleLoadedMetadata = useCallback(() => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      const videoDuration = videoElement.duration;
+      setDuration(videoDuration);
+
+      // if (!snapshotsCaptured) {
+      //   captureSnapshots(videoDuration)
+      //     .then(() => setSnapshotsCaptured(true))
+      //     .then(() => loadSnapshotsFromLocalStorage())
+      //     .catch((err) => console.error("Ошибка захвата снимков:", err));
+      // }
+    }
+  }, [videoRef.current?.src]);
+
   useEffect(() => {
     const videoElement = videoRef.current;
     if (videoElement) {
-      const handleLoadedMetadata = () => {
-        const videoDuration = Math.ceil(videoElement.duration);
-        setDuration(videoDuration);
-
-        if (!snapshotsCaptured) {
-          captureSnapshots(videoDuration)
-            .then(() => setSnapshotsCaptured(true))
-            .then(() => loadSnapshotsFromLocalStorage())
-            .catch((err) => console.error("Ошибка захвата снимков:", err));
-        }
-      };
-
       videoElement.addEventListener("loadedmetadata", handleLoadedMetadata);
 
       return () => {
@@ -57,7 +61,7 @@ const VideoTimeline: React.FC<Props> = ({
         );
       };
     }
-  }, [duration]);
+  }, [handleLoadedMetadata]);
 
   useEffect(() => {
     if (duration > 0) {
@@ -104,7 +108,7 @@ const VideoTimeline: React.FC<Props> = ({
         videoElement.removeEventListener("timeupdate", handleTimeUpdate);
       };
     }
-  }, [videoRef.current]);
+  }, [videoRef.current?.currentSrc]);
 
   const handleRangeChange = (values: number[]) => {
     setMinTime(values[0]);
@@ -116,7 +120,7 @@ const VideoTimeline: React.FC<Props> = ({
   return (
     <>
       <div className="flex flex-col items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 ">
-        <video
+        {/* <video
           ref={videoRef}
           onError={() => console.error("Error loading video")}
           controls
@@ -128,7 +132,8 @@ const VideoTimeline: React.FC<Props> = ({
             src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
             type="video/mp4"
           />
-        </video>
+        </video> */}
+        <VideoPlayer videoRef={videoRef} duration={duration} />
 
         <div className="relative w-full mt-4">
           <h2 className="text-base font-bold leading-4 text-white my-4">

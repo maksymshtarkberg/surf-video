@@ -114,3 +114,14 @@ export const formatTime = (timeInSeconds: number) => {
     .padStart(2, "0");
   return `${minutes}:${seconds}`;
 };
+
+export const authorize = async () => {
+  try {
+    await window.fetch("/axis-cgi/usergroup.cgi", {
+      credentials: "include",
+      mode: "no-cors",
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
