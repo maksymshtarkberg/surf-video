@@ -35,7 +35,7 @@ const VideoPlayer: FC<Props> = ({ videoRef, duration }) => {
     <div className="w-full h-[600px] flex flex-col items-center">
       {authorized ? (
         <Player
-          hostname="195.60.68.14:41068"
+          hostname="195.60.68.14:11068"
           initialFormat={format}
           autoPlay
           autoRetry
