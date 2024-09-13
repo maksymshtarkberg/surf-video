@@ -56,7 +56,7 @@ const VideoSection: FC<Props> = ({ video, relatedVideos }) => {
           {video.title}
         </h1>
         <div className="w-full flex flex-col items-center text-main">
-          <video
+          {/* <video
             // ref={videoRef}
             onError={() => console.error("Error loading video")}
             controls
@@ -68,8 +68,8 @@ const VideoSection: FC<Props> = ({ video, relatedVideos }) => {
               src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
               type="video/mp4"
             />
-          </video>
-          {/* <VideoPlayer /> */}
+          </video> */}
+          <VideoPlayer />
         </div>
         <div className="flex justify-end my-6">
           <Button

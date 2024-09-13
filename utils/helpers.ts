@@ -117,7 +117,7 @@ export const formatTime = (timeInSeconds: number) => {
 
 export const authorize = async () => {
   try {
-    await window.fetch("/axis-cgi/usergroup.cgi", {
+    await window.fetch("/axis-cgi/imagesize.cgi?camera=1", {
       credentials: "include",
       mode: "cors",
     });

@@ -129,7 +129,7 @@ const VideoTimeline: React.FC<Props> = ({
           autoPlay
         >
           <source
-            src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
             type="video/mp4"
           />
         </video>
