@@ -4,12 +4,14 @@ import dynamic from "next/dynamic";
 import { authorize } from "utils/helpers";
 import { Format } from "media-stream-player";
 
-const Player = dynamic(
-  () => import("media-stream-player").then((mod) => mod.Player),
+const BasicPlayer = dynamic(
+  () => import("media-stream-player").then((mod) => mod.BasicPlayer),
   {
     ssr: false,
   }
 );
+
+// import { Player } from "media-stream-player";
 type Props = {
   videoRef?: React.RefObject<HTMLVideoElement>;
   duration?: number;
@@ -19,32 +21,23 @@ const VideoPlayer: FC<Props> = ({ videoRef, duration }) => {
   const [authorized, setAuthorized] = useState(false);
   const format: Format = "RTP_H264" as Format;
 
-  useEffect(() => {
-    authorize()
-      .then(() => setAuthorized(true))
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   authorize()
+  //     .then(() => setAuthorized(true))
+  //     .catch((err) => {
+  //       console.error(err);
+  //     });
+  // }, []);
 
-  if (!authorized) {
-    return <div>authenticating...</div>;
-  }
+  // if (!authorized) {
+  //   return <div>authenticating...</div>;
+  // }
 
   return (
     <div className="w-full h-[600px] flex flex-col items-center">
-      {authorized ? (
-        <Player
+        <BasicPlayer
           hostname="195.60.68.14:11068"
-          initialFormat={format}
-          autoPlay
-          autoRetry
-          vapixParams={{ resolution: "800x600" }}
-          ref={videoRef}
         />
-      ) : (
-        <div>Failed to load video</div>
-      )}
     </div>
   );
 };
