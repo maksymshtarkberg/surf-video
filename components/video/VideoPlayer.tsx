@@ -21,17 +21,17 @@ const VideoPlayer: FC<Props> = ({ videoRef, duration }) => {
   const [authorized, setAuthorized] = useState(false);
   const format: Format = "RTP_H264" as Format;
 
-  // useEffect(() => {
-  //   authorize()
-  //     .then(() => setAuthorized(true))
-  //     .catch((err) => {
-  //       console.error(err);
-  //     });
-  // }, []);
+  useEffect(() => {
+    authorize()
+      .then(() => setAuthorized(true))
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
-  // if (!authorized) {
-  //   return <div>authenticating...</div>;
-  // }
+  if (!authorized) {
+    return <div>authenticating...</div>;
+  }
 
   return (
     <div className="w-full h-[600px] flex flex-col items-center">

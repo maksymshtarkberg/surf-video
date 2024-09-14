@@ -119,7 +119,7 @@ export const authorize = async () => {
   try {
     await window.fetch("/axis-cgi/usergroup.cgi", {
       credentials: "include",
-      mode: "no-cors",
+      mode: "cors",
     });
   } catch (err) {
     console.error(err);
