@@ -19,7 +19,6 @@
     "chart.js": "^4.4.4",
     "chartjs-adapter-date-fns": "^3.0.0",
     "contentful": "^10.12.15",
-    "date-fns": "^3.6.0",
     "luxon": "^3.5.0",
     "media-stream-library": "^13.1.1",
     "media-stream-player": "^13.1.1",
