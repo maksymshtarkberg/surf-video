@@ -71,11 +71,11 @@ const VideoSection: FC<Props> = ({ video, relatedVideos }) => {
           </video> */}
           <VideoPlayer />
         </div>
-        <div className="flex justify-end my-6">
+        <div className="flex justify-end my-6 w-1/2 md:w-1/3 ml-auto">
           <Button
             text="Go to the cut mode"
             onClickHandler={handleRouter}
-            classTlw="flex items-center justify-between"
+            classTlw="flex items-center justify-between whitespace-nowrap relative pl-8"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@ const VideoSection: FC<Props> = ({ video, relatedVideos }) => {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="mr-2"
+              className="mr-2 absolute left-1"
               width="24px"
               height="24px"
             >

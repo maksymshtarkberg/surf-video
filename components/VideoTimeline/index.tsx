@@ -187,7 +187,7 @@ const VideoTimeline: React.FC<Props> = ({
             </div>
 
             {/* Timeline divisions */}
-            <div className="relative top-0 -left-[15px] w-full flex justify-start">
+            <div className="relative -top-1 -left-[7px] md:top-0 lg:-left-[15px]  w-full flex justify-start">
               {[...Array(numDivisions)].map((_, index) => {
                 const timeForDivision = index * divisionInterval;
                 const isMinuteMark = index % 5 === 0;
@@ -203,7 +203,7 @@ const VideoTimeline: React.FC<Props> = ({
                     }}
                   >
                     {isMinuteMark && (
-                      <div className="relative md:text-xs text-[10px] text-white -rotate-90 left-3 bottom-1">
+                      <div className="relative md:text-xs text-[8px] lg:text-[10px] text-white -rotate-90 left-3 bottom-1">
                         {formatTime(timeForDivision)}
                       </div>
                     )}

@@ -161,11 +161,11 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
 
   return (
     <>
-      <div className="relative my-10 flex justify-between">
+      <div className="relative my-10 flex flex-wrap justify-between">
         {activeChart !== "combined" && (
           <button
             onClick={() => setActiveChart("combined")}
-            className="px-4 py-2 rounded bg-green-500 text-white"
+            className="px-4 py-2 rounded bg-green-500 text-white mb-2"
           >
             Show Combined
           </button>
@@ -173,7 +173,7 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
         {(activeChart === "forecast" || activeChart === "combined") && (
           <button
             onClick={() => setActiveChart("history")}
-            className="px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-left-[17%] bg-blue-500 text-white"
+            className="px-4 py-2 rounded bg-blue-500 text-white mb-2"
           >
             Show Prev Weeks
           </button>
@@ -181,14 +181,14 @@ const WaveHeightChart: React.FC<WaveHeightChartProps> = ({ data }) => {
         {(activeChart === "history" || activeChart === "combined") && (
           <button
             onClick={() => setActiveChart("forecast")}
-            className="px-4 py-2 rounded xl:absolute xl:top-[280px] xl:-right-[16%] bg-red-500 text-white"
+            className="px-4 py-2 rounded bg-red-500 text-white mb-2"
           >
             Show Next Week
           </button>
         )}
       </div>
 
-      <div className="relative h-[500px] w-full my-6">
+      <div className="relative w-full mt-6 mb-8 h-64 sm:h-80 md:h-96 lg:h-[500px]">
         <div
           className={`transition-opacity duration-500 ease-in-out ${
             activeChart === "history" ? "opacity-100 z-10" : "opacity-0 z-0"
