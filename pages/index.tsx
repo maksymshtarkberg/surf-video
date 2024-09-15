@@ -64,7 +64,7 @@ const HomePage: NextPage<Props> = ({ videos, models, videosByCity }) => {
       />
       <NavMobile videosByCity={videosByCity} />
       <VideosSection
-        headline="Latest Videos"
+        headline="Surf Check"
         variant="h2"
         videos={paginatedVideos}
       />

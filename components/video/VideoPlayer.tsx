@@ -3,8 +3,8 @@ import React, { FC, useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import { authorize } from "utils/helpers";
 // import { Format } from "media-stream-player";
-import 'video.js/dist/video-js.css';
-import videojs from 'video.js';
+import "video.js/dist/video-js.css";
+import videojs from "video.js";
 
 // const BasicPlayer = dynamic(
 //   () => import("media-stream-player").then((mod) => mod.BasicPlayer),
@@ -23,10 +23,10 @@ const VideoPlayer = ({}) => {
   const videoRef = useRef(null);
 
   useEffect(() => {
-    const player = videojs(videoRef.current?videoRef.current:"", {
+    const player = videojs(videoRef.current ? videoRef.current : "", {
       controls: true,
       autoplay: true,
-      preload: 'auto',
+      preload: "auto",
       // sources: [{ src, type: 'application/x-mpegURL' }]
       sources: [{ src: 'https://camrewinds.cdn-surfline.com/live/pt-supertubes.stream.20240915T091210764.mp4', type: 'video/mp4' }]
     });
