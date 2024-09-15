@@ -19,6 +19,7 @@
     "chart.js": "^4.4.4",
     "chartjs-adapter-date-fns": "^3.0.0",
     "contentful": "^10.12.15",
+    "date-fns": "^3.6.0",
     "luxon": "^3.5.0",
     "media-stream-library": "^13.1.1",
     "media-stream-player": "^13.1.1",
@@ -27,7 +28,7 @@
     "next": "^12.3.1",
     "next-plugin-preact": "^3.0.7",
     "preact": "^10.11.2",
-    "preact-render-to-string": "^5.2.5",
+    "preact-render-to-string": "^6.5.0",
     "react": "npm:@preact/compat@^17.1.2",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "npm:@preact/compat@^17.1.2",
@@ -37,8 +38,10 @@
     "seedrandom": "^3.0.5",
     "sharp": "^0.31.1",
     "stream-browserify": "^3.0.0",
+    "styled-components": "^6.1.13",
     "tube-utils": "^1.2.2",
-    "util": "^0.12.5"
+    "util": "^0.12.5",
+    "video.js": "^8.17.4"
   },
   "devDependencies": {
     "@types/ffmpeg": "^1.0.7",
