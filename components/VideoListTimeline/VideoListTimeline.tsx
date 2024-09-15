@@ -1,3 +1,4 @@
+import Button from "@ui/Button";
 import { FC, useEffect, useRef, useState } from "react";
 
 type Props = {};
@@ -32,30 +33,12 @@ const VideoListTimeline: FC<Props> = () => {
 
   return (
     <div className="relative inline" ref={dropdownRef}>
-      <button
-        onClick={toggleDropdown}
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        type="button"
-      >
-        Video Timeline
-        <svg
-          className={`w-2.5 h-2.5 ml-2 transition duration-300 ${
-            isOpen && "rotate-180"
-          }`}
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 10 6"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="m1 1 4 4 4-4"
-          />
-        </svg>
-      </button>
+      <Button
+        text="Timeline"
+        onClickHandler={toggleDropdown}
+        classTlw="relative"
+      ></Button>
+
       {isOpen && (
         <div className="absolute flex flex-col-reverse left-0 z-10 bg-white rounded-lg shadow w-44 transform transition-transform duration-300 ease-out opacity-0 translate-y-[-10px] animate-slide-up">
           <ul className="py-2 text-sm text-gray-700 ">

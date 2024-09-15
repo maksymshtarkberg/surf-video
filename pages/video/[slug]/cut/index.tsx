@@ -143,7 +143,7 @@ const VideoCut: NextPage<Props> = () => {
           openCut={openCut}
         />
 
-        <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10">
+        <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 gap-14">
           <VideoListTimeline />
           <PlayButtons videoRef={videoRef} />
           <Button

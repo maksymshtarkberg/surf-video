@@ -183,12 +183,15 @@ const VideoTrimmer: React.FC<Props> = ({
 
   return (
     <>
-      <div className="flex items-center py-5 px-4 justify-between">
-        <Button
-          text="Select and Preview"
-          onClickHandler={trimVideo}
-          disabled={isProcessing || !fileReady || isClipDisabled}
-        />
+      <div className="flex items-center py-5 px-4 justify-between gap-5">
+        <div className="flex space-x-4">
+          <Button
+            text="Select and Preview"
+            onClickHandler={trimVideo}
+            disabled={isProcessing || !fileReady || isClipDisabled}
+            classTlw="whitespace-nowrap"
+          />
+        </div>
 
         <div className="flex space-x-4">
           <Button
