@@ -20,19 +20,17 @@ type Props = {
 };
 
 const VideoPlayer = ({}) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
-    if (!videoRef.current) return;
-
-    const player = videojs(videoRef.current, {
+    const player = videojs(videoRef.current ? videoRef.current : "", {
       controls: true,
       autoplay: true,
       preload: "auto",
       // sources: [{ src, type: 'application/x-mpegURL' }]
       sources: [
         {
-          src: "https://stream-akamai.castr.com/5b9352dbda7b8c769937e459/live_2361c920455111ea85db6911fe397b9e/index.fmp4.m3u8",
+          src: "https://skynewsau-live.akamaized.net/hls/live/2002689/skynewsau-extra1/master.m3u8",
           type: "application/x-mpegURL",
         },
       ],
@@ -42,7 +40,7 @@ const VideoPlayer = ({}) => {
 
   return (
     <div>
-      <video ref={videoRef} className="video-js vjs-default-skin " />
+      <video ref={videoRef} className="video-js vjs-default-skin" />
     </div>
   );
 };
