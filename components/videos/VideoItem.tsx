@@ -1,12 +1,9 @@
-import { EyeIcon, ClockIcon } from "@heroicons/react/outline";
-import { Video } from "types/types";
 import React, { FC } from "react";
-import millify from "millify";
 import Link from "next/link";
+import Image from "next/image";
+import { Video } from "types/types";
 import VideoTagItem from "./VideoTagItem";
 import { buildVideoUrl } from "utils/navigation";
-import Image from "next/image";
-import { formatTimeLite } from "utils/time";
 
 type Props = {
   video: Video;
@@ -14,6 +11,7 @@ type Props = {
   showViews?: boolean;
   showDuration?: boolean;
   showTags?: boolean;
+  isFirst?: boolean;
 };
 
 const VideoItem: FC<Props> = ({
@@ -22,6 +20,7 @@ const VideoItem: FC<Props> = ({
   showViews = false,
   showDuration = false,
   showTags = false,
+  isFirst = false,
 }) => {
   return (
     <div className="text-main justify-items-center overflow-hidden">
@@ -31,7 +30,7 @@ const VideoItem: FC<Props> = ({
             <Image
               className="rounded-xl"
               alt={video.title}
-              src={"/images/no-image.png"}
+              src={isFirst ? "/images/latest_full.jpg" : "/images/no-image.png"}
               layout={"responsive"}
               width={400}
               height={250}
@@ -42,11 +41,6 @@ const VideoItem: FC<Props> = ({
                 LIVE
               </span>
             )}
-            {/* {showViews && (
-              <span className="bg-secondary py-1 px-2 bg-opacity-80 text-inverted text-xs font-light rounded-md absolute bottom-2 left-2 inline-flex group-hover:opacity-0 duration-500 ease-in-out items-center">
-                <EyeIcon className="w-4 h-4 mr-1" /> {millify(video.views)}
-              </span>
-            )} */}
           </div>
 
           <div className="mx-2 mt-2 line-clamp-2 mb-2 font-semibold">

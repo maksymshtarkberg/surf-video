@@ -1,7 +1,7 @@
-import Headline from "@ui/Headline";
-import { HeadlineVariant, Video } from "types/types";
 import React, { FC } from "react";
 import VideoItem from "./VideoItem";
+import Headline from "@ui/Headline";
+import { HeadlineVariant, Video } from "types/types";
 
 type Props = {
   headline: string;
@@ -17,13 +17,14 @@ const VideosSection: FC<Props> = ({ headline, videos, variant = "h1" }) => {
         {videos.length === 0 ? (
           <p>No videos available</p>
         ) : (
-          videos.map((video) => (
+          videos.map((video, index) => (
             <VideoItem
               key={video.id}
               video={video}
               showHd
               showViews
               showDuration
+              isFirst={index === 0}
             />
           ))
         )}
