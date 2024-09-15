@@ -5,6 +5,7 @@ import { authorize } from "utils/helpers";
 // import { Format } from "media-stream-player";
 import "video.js/dist/video-js.css";
 import videojs from "video.js";
+import AdBanner from "../AdBanner";
 
 // const BasicPlayer = dynamic(
 //   () => import("media-stream-player").then((mod) => mod.BasicPlayer),
@@ -44,6 +45,11 @@ const VideoPlayer = ({}) => {
         ref={videoRef}
         className="video-js vjs-default-skin vjs-fluid absolute top-0 left-0 w-full h-full"
       />
+      <AdBanner
+          data-ad-slot="5268442113"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        />
     </div>
   );
 };
