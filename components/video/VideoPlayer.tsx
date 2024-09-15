@@ -45,7 +45,6 @@ const VideoPlayer = ({}) => {
         ref={videoRef}
         className="video-js vjs-default-skin vjs-fluid absolute top-0 left-0 w-full h-full"
       />
-      <AdBanner />
     </div>
   );
 };
