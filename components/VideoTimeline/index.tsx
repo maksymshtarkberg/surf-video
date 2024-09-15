@@ -124,6 +124,7 @@ const VideoTimeline: React.FC<Props> = ({
           ref={videoRef}
           onError={() => console.error("Error loading video")}
           controls
+          crossOrigin="anonymous"
           className="w-full max-w-4xl"
           autoPlay
         >
