@@ -28,7 +28,12 @@ const VideoPlayer = ({}) => {
       autoplay: true,
       preload: "auto",
       // sources: [{ src, type: 'application/x-mpegURL' }]
-      sources: [{ src: 'https://camrewinds.cdn-surfline.com/live/pt-supertubes.stream.20240915T091210764.mp4', type: 'video/mp4' }]
+      sources: [
+        {
+          src: "https://camrewinds.cdn-surfline.com/live/pt-supertubes.stream.20240915T091210764.mp4",
+          type: "video/mp4",
+        },
+      ],
     });
     return () => player.dispose();
   }, []);
