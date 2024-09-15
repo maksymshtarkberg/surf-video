@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const AdBanner = (props) => {
+const AdBanner = () => {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
