@@ -15,8 +15,8 @@ import videojs from "video.js";
 
 // import { Player } from "media-stream-player";
 type Props = {
-  videoRef?: React.RefObject<HTMLVideoElement>;
-  duration?: number;
+  // videoRef?: React.RefObject<HTMLVideoElement>;
+  // duration?: number;
 };
 
 const VideoPlayer = ({}) => {
@@ -39,8 +39,11 @@ const VideoPlayer = ({}) => {
   }, []);
 
   return (
-    <div>
-      <video ref={videoRef} className="video-js vjs-default-skin" />
+    <div className="relative w-full py-3">
+      <video
+        ref={videoRef}
+        className="video-js vjs-default-skin vjs-fluid absolute top-0 left-0 w-full h-full"
+      />
     </div>
   );
 };
