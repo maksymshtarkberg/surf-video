@@ -45,7 +45,7 @@ const AdOverlay = ({
     <>
       <video autoPlay controls className="w-full">
         <source
-          src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          src="https://camrewinds.cdn-surfline.com/live/pt-supertubes.stream.20240915T091210764.mp4"
           type="video/mp4"
         />
         Your browser does not support the video tag.
