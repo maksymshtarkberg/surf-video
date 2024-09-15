@@ -28,7 +28,7 @@ const VideoPlayer = ({}) => {
       autoplay: true,
       preload: 'auto',
       // sources: [{ src, type: 'application/x-mpegURL' }]
-      sources: [{ src: 'https://skynewsau-live.akamaized.net/hls/live/2002689/skynewsau-extra1/master.m3u8', type: 'application/x-mpegURL' }]
+      sources: [{ src: 'https://camrewinds.cdn-surfline.com/live/pt-supertubes.stream.20240915T091210764.mp4', type: 'video/mp4' }]
     });
     return () => player.dispose();
   }, []);
