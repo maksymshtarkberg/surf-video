@@ -17,7 +17,9 @@ const AdBanner = (props) => {
         overflow: 'hidden',
       }}
       data-ad-client="ca-pub-3690002536030103"
-      {...props}
+      data-ad-slot="5268442113"
+      data-ad-format="auto"
+      data-full-width-responsive="true"
     />
   );
 };

@@ -45,11 +45,7 @@ const VideoPlayer = ({}) => {
         ref={videoRef}
         className="video-js vjs-default-skin vjs-fluid absolute top-0 left-0 w-full h-full"
       />
-      <AdBanner
-          data-ad-slot="5268442113"
-          data-ad-format="auto"
-          data-full-width-responsive="true"
-        />
+      <AdBanner />
     </div>
   );
 };
