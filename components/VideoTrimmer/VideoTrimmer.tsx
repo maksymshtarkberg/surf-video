@@ -10,9 +10,10 @@ type Props = {
   videoRef: React.RefObject<HTMLVideoElement>;
   captureSnapshots: (videoDuration: number) => Promise<void>;
   isLoadindCut: boolean;
-  setIsLoadindCut: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoadindCut: (newDuration: boolean) => void;
   minTime: number;
   maxTime: number;
+  handleSetDuration: (newDuration: number) => void;
 };
 
 const VideoTrimmer: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const VideoTrimmer: React.FC<Props> = ({
   setIsLoadindCut,
   minTime,
   maxTime,
+  handleSetDuration,
 }) => {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -42,7 +44,7 @@ const VideoTrimmer: React.FC<Props> = ({
     if (videoRef.current && !videoFile) {
       loadVideoFile();
     }
-  }, [videoFile]);
+  }, [!videoFile]);
 
   const loadVideoFile = async () => {
     console.log("started");
@@ -128,13 +130,16 @@ const VideoTrimmer: React.FC<Props> = ({
     }
 
     if (videoRef.current && !isDownloadStarted) {
-      videoRef.current.src = url;
-      videoRef.current.load();
-      videoRef.current.onloadeddata = () => {
-        captureSnapshots(videoRef.current?.duration || 0);
+      const videoElement = videoRef.current;
+      videoElement.src = url;
+      videoElement.load();
+
+      videoElement.onloadeddata = async () => {
+        if (videoElement.src === url) {
+          captureSnapshots(videoElement.duration || 0);
+        }
       };
     }
-
     setIsProcessing(false);
     setIsLoadindCut(!isLoadindCut);
   };

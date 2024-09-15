@@ -4,9 +4,7 @@ import VideoTimeline from "components/VideoTimeline";
 import VideoListTimeline from "components/VideoListTimeline/VideoListTimeline";
 import { GetServerSideProps, NextPage } from "next";
 import { useRef, useState, useCallback, useEffect } from "react";
-import { useRouter } from "next/router";
-import PreLoader from "components/PreLoader/PreLoader";
-import VideoTrimmer from "components/VideoTrimmer/VideoTrimmer";
+import PreLoader from "components/PreLoader/PreLoader"; // Assuming you have a PreLoader component
 import VideoPlayer from "components/video/VideoPlayer";
 
 type Props = {};
@@ -18,6 +16,7 @@ const VideoCut: NextPage<Props> = () => {
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
   const [openCut, setIsCutOpened] = useState<boolean>(false);
   const [snapshots, setSnapshots] = useState<string[]>([]);
+  const [duration, setDuration] = useState<number>(0);
 
   const saveSnapshotsToLocalStorage = useCallback(
     (snapshotsArray: string[]) => {
@@ -37,97 +36,118 @@ const VideoCut: NextPage<Props> = () => {
     localStorage.removeItem("snapshots");
   }, []);
 
-  const captureSnapshots = useCallback(
-    async (videoDuration: number) => {
-      setSnapshots([]);
-      removeSnapshotsFromLocalStorage();
+  const captureSnapshots = async (videoDuration: number) => {
+    setSnapshots([]);
+    removeSnapshotsFromLocalStorage();
 
-      if (!videoDuration || isNaN(videoDuration) || videoDuration <= 0) {
-        console.error("Invalid video duration:", videoDuration);
+    setIsCapturing(true);
+
+    if (!videoDuration || isNaN(videoDuration) || videoDuration <= 0) {
+      console.error("Invalid video duration:", videoDuration);
+      return;
+    }
+
+    const videoElement = videoRef.current;
+    const canvasElement = canvasRef.current;
+    if (videoElement && canvasElement) {
+      const ctx = canvasElement.getContext("2d");
+      if (!ctx) {
+        console.error("Unable to get 2D context for canvas");
+        setIsCapturing(false);
         return;
       }
 
-      setIsCapturing(true);
+      const wasPlaying = !videoElement.paused;
+      const originalTime = videoElement.currentTime;
+      videoElement.pause();
 
-      const videoElement = videoRef.current;
-      const canvasElement = canvasRef.current;
-      if (videoElement && canvasElement) {
-        const ctx = canvasElement.getContext("2d");
-        if (!ctx) {
-          console.error("Unable to get 2D context for canvas");
-          setIsCapturing(false);
-          return;
-        }
+      const snapshotIntervals = 10;
+      let snapshotsArray: string[] = [];
 
-        const wasPlaying = !videoElement.paused;
-        const originalTime = videoElement.currentTime;
-        videoElement.pause();
+      const captureFrame = (time: number): Promise<void> => {
+        return new Promise<void>((resolve) => {
+          videoElement.onseeked = null;
+          videoElement.currentTime = time;
 
-        const snapshotIntervals = 10;
-        let snapshotsArray: string[] = [];
-
-        const captureFrame = (time: number): Promise<void> => {
-          return new Promise<void>((resolve) => {
-            videoElement.onseeked = null;
-            videoElement.currentTime = time;
-
-            const handleSeeked = () => {
-              requestAnimationFrame(() => {
-                if (videoElement.readyState >= 2) {
-                  try {
-                    ctx.drawImage(
-                      videoElement,
-                      0,
-                      0,
-                      canvasElement.width,
-                      canvasElement.height
-                    );
-                    const imageDataURL = canvasElement.toDataURL("image/jpeg");
-                    snapshotsArray.push(imageDataURL);
-                  } catch (error) {
-                    console.error("Error capturing snapshot: ", error);
-                  }
-                  resolve();
-                } else {
-                  resolve();
+          const handleSeeked = () => {
+            requestAnimationFrame(() => {
+              if (videoElement.readyState >= 2) {
+                try {
+                  ctx.drawImage(
+                    videoElement,
+                    0,
+                    0,
+                    canvasElement.width,
+                    canvasElement.height
+                  );
+                  const imageDataURL = canvasElement.toDataURL("image/jpeg");
+                  snapshotsArray.push(imageDataURL);
+                } catch (error) {
+                  console.error("Error capturing snapshot: ", error);
                 }
-              });
-            };
+                resolve();
+              } else {
+                resolve();
+              }
+            });
+          };
 
-            if (videoElement.readyState >= 2) {
-              handleSeeked();
-            } else {
-              videoElement.onseeked = handleSeeked;
-            }
-          });
-        };
+          if (videoElement.readyState >= 2) {
+            handleSeeked();
+          } else {
+            videoElement.onseeked = handleSeeked;
+          }
+        });
+      };
 
-        for (let i = 0; i < snapshotIntervals; i++) {
-          const snapshotTime = (videoDuration / snapshotIntervals) * i;
-          await captureFrame(snapshotTime);
-        }
-
-        saveSnapshotsToLocalStorage(snapshotsArray);
-        loadSnapshotsFromLocalStorage();
-
-        videoElement.currentTime = originalTime;
-        if (wasPlaying) {
-          videoElement.play();
-        }
+      for (let i = 0; i < snapshotIntervals; i++) {
+        const snapshotTime = (videoDuration / snapshotIntervals) * i;
+        await captureFrame(snapshotTime);
       }
-      setIsCapturing(false);
-      console.log(isCapturing);
-    },
-    [
-      removeSnapshotsFromLocalStorage,
-      saveSnapshotsToLocalStorage,
-      loadSnapshotsFromLocalStorage,
-    ]
-  );
+
+      saveSnapshotsToLocalStorage(snapshotsArray);
+      loadSnapshotsFromLocalStorage();
+
+      videoElement.currentTime = originalTime;
+      if (wasPlaying) {
+        videoElement.play();
+      }
+    }
+  };
 
   const handleClipVideo = () => {
     setIsCutOpened(!openCut);
     videoRef.current?.pause();
+  };
+
+  const handleLoadedMetadata = () => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      const videoDuration = videoElement.duration;
+      setDuration(videoDuration);
+
+      captureSnapshots(videoDuration)
+        .then(() => setIsCapturing(false))
+        .catch((err) => console.error("Error capturing snapshots:", err));
+    }
+  };
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      videoElement.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+      return () => {
+        videoElement.removeEventListener(
+          "loadedmetadata",
+          handleLoadedMetadata
+        );
+      };
+    }
+  }, [duration]);
+
+  const handleSetDuration = (newDuration: number) => {
+    setDuration(newDuration);
   };
 
   return (
@@ -141,6 +161,8 @@ const VideoCut: NextPage<Props> = () => {
           loadSnapshotsFromLocalStorage={loadSnapshotsFromLocalStorage}
           snapshots={snapshots}
           openCut={openCut}
+          duration={duration}
+          handleSetDuration={handleSetDuration}
         />
 
         <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 gap-14">
@@ -159,9 +181,6 @@ const VideoCut: NextPage<Props> = () => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
-  // if (!slug) {
-  //   return { redirect: { destination: "/", permanent: true } };
-  // }
   return {
     props: {},
   };

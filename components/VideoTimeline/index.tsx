@@ -14,6 +14,8 @@ type Props = {
   snapshots: string[];
   openCut: boolean;
   isCapturing: boolean;
+  duration: number;
+  handleSetDuration: (newDuration: number) => void;
 };
 
 const VideoTimeline: React.FC<Props> = ({
@@ -24,8 +26,9 @@ const VideoTimeline: React.FC<Props> = ({
   snapshots,
   openCut,
   isCapturing,
+  duration,
+  handleSetDuration,
 }) => {
-  const [duration, setDuration] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [numDivisions, setNumDivisions] = useState<number>(0);
   const [divisionInterval, setDivisionInterval] = useState<number>(0);
@@ -33,35 +36,6 @@ const VideoTimeline: React.FC<Props> = ({
   const [maxTime, setMaxTime] = useState<number>(currentTime + 40);
   const [isLoadindCut, setIsLoadindCut] = useState<boolean>(false);
   const [snapshotsCaptured, setSnapshotsCaptured] = useState<boolean>(false);
-
-  const handleLoadedMetadata = useCallback(() => {
-    const videoElement = videoRef.current;
-    if (videoElement) {
-      const videoDuration = videoElement.duration;
-      setDuration(videoDuration);
-
-      if (!snapshotsCaptured) {
-        captureSnapshots(videoDuration)
-          .then(() => setSnapshotsCaptured(true))
-          .then(() => loadSnapshotsFromLocalStorage())
-          .catch((err) => console.error("Ошибка захвата снимков:", err));
-      }
-    }
-  }, [videoRef.current?.src]);
-
-  useEffect(() => {
-    const videoElement = videoRef.current;
-    if (videoElement) {
-      videoElement.addEventListener("loadedmetadata", handleLoadedMetadata);
-
-      return () => {
-        videoElement.removeEventListener(
-          "loadedmetadata",
-          handleLoadedMetadata
-        );
-      };
-    }
-  }, [handleLoadedMetadata]);
 
   useEffect(() => {
     if (duration > 0) {
@@ -108,7 +82,7 @@ const VideoTimeline: React.FC<Props> = ({
         videoElement.removeEventListener("timeupdate", handleTimeUpdate);
       };
     }
-  }, [videoRef.current?.currentSrc]);
+  }, [videoRef.current?.src]);
 
   const handleRangeChange = (values: number[]) => {
     setMinTime(values[0]);
@@ -116,6 +90,10 @@ const VideoTimeline: React.FC<Props> = ({
   };
 
   const currentIndex = Math.floor((currentTime / duration) * 10);
+
+  const handleLoadingCut = (newDuration: boolean) => {
+    setIsLoadindCut(newDuration);
+  };
 
   return (
     <>
@@ -216,10 +194,11 @@ const VideoTimeline: React.FC<Props> = ({
             <VideoTrimmer
               videoRef={videoRef}
               captureSnapshots={captureSnapshots}
-              setIsLoadindCut={setIsLoadindCut}
+              setIsLoadindCut={handleLoadingCut}
               isLoadindCut={isLoadindCut}
               minTime={minTime}
               maxTime={maxTime}
+              handleSetDuration={handleSetDuration}
             />
           )}
         </div>
