@@ -3,36 +3,45 @@ import { FFmpeg } from "@ffmpeg/ffmpeg";
 import Button from "@ui/Button";
 import { fileToUint8Array } from "utils/helpers";
 import RangeSlider from "components/RangeSlider/RangeSlider";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { setIsCapturing } from "store/slices/isCapturingSlice";
+import {
+  setDownloadUrl,
+  setFileReady,
+  setIsLoadingCut,
+  setIsProcessing,
+  setTrimmedVideoBlob,
+  setVideoFile,
+  setVideoSrc,
+} from "store/slices/videoFileSlice";
+import { setDuration } from "store/slices/videoSlice";
+import { setIsClipDisabled } from "store/slices/openCutSlice";
 
 let ffmpeg: FFmpeg | null = null;
 
 type Props = {
   videoRef: React.RefObject<HTMLVideoElement>;
-  captureSnapshots: (videoDuration: number) => Promise<void>;
-  isLoadindCut: boolean;
-  setIsLoadindCut: (newDuration: boolean) => void;
   minTime: number;
   maxTime: number;
-  handleSetDuration: (newDuration: number) => void;
 };
 
-const VideoTrimmer: React.FC<Props> = ({
-  videoRef,
-  captureSnapshots,
-  isLoadindCut,
-  setIsLoadindCut,
-  minTime,
-  maxTime,
-  handleSetDuration,
-}) => {
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [trimmedVideoBlob, setTrimmedVideoBlob] = useState<Blob | null>(null);
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+const VideoTrimmer: React.FC<Props> = ({ videoRef, minTime, maxTime }) => {
   const [isDownloadStarted, setIsDownloadStarted] = useState<boolean>(false);
   const [progress, setProgress] = useState(0);
-  const [fileReady, setFileReady] = useState<boolean>(false);
-  const [isClipDisabled, setIsClipDisabled] = useState<boolean>(false);
+
+  const videoFile = useAppSelector((state) => state.videoFile.videoFile);
+  const isFileReady = useAppSelector((state) => state.videoFile.isFileReady);
+  const isProcessing = useAppSelector((state) => state.videoFile.isProcessing);
+  const isLoadingCut = useAppSelector((state) => state.videoFile.isLoadingCut);
+
+  const isClipDisabled = useAppSelector(
+    (state) => state.openCut.isClipDisabled
+  );
+  const trimmedVideoBlob = useAppSelector(
+    (state) => state.videoFile.trimmedVideoBlob
+  );
+  const downloadUrl = useAppSelector((state) => state.videoFile.dowloadUrl);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (typeof window !== "undefined" && ffmpeg === null) {
@@ -44,7 +53,7 @@ const VideoTrimmer: React.FC<Props> = ({
     if (videoRef.current && !videoFile) {
       loadVideoFile();
     }
-  }, [!videoFile]);
+  }, [videoFile]);
 
   const loadVideoFile = async () => {
     console.log("started");
@@ -79,8 +88,8 @@ const VideoTrimmer: React.FC<Props> = ({
 
         const blob = new Blob(chunks, { type: "video/mp4" });
         const file = new File([blob], "input.mp4", { type: "video/mp4" });
-        setVideoFile(file);
-        setFileReady(true);
+        dispatch(setVideoFile(file));
+        dispatch(setFileReady(true));
         // console.log("finished");
       }
     }
@@ -89,8 +98,8 @@ const VideoTrimmer: React.FC<Props> = ({
   const trimVideo = async () => {
     if (!videoFile || !ffmpeg) return;
 
-    setIsProcessing(true);
-    setIsClipDisabled(true);
+    dispatch(setIsProcessing(true));
+    dispatch(setIsClipDisabled(true));
 
     if (!ffmpeg.loaded) {
       await ffmpeg.load();
@@ -120,28 +129,15 @@ const VideoTrimmer: React.FC<Props> = ({
     const data = await ffmpeg.readFile("output.mp4");
     const trimmedBlob = new Blob([data], { type: "video/mp4" });
 
-    setTrimmedVideoBlob(trimmedBlob);
+    dispatch(setTrimmedVideoBlob(trimmedBlob));
 
     const url = URL.createObjectURL(trimmedBlob);
-    setDownloadUrl(url);
+    dispatch(setDownloadUrl(url));
 
-    if (isDownloadStarted) {
-      return;
-    }
+    dispatch(setVideoSrc(url));
 
-    if (videoRef.current && !isDownloadStarted) {
-      const videoElement = videoRef.current;
-      videoElement.src = url;
-      videoElement.load();
-
-      videoElement.onloadeddata = async () => {
-        if (videoElement.src === url) {
-          captureSnapshots(videoElement.duration || 0);
-        }
-      };
-    }
-    setIsProcessing(false);
-    setIsLoadindCut(!isLoadindCut);
+    dispatch(setIsProcessing(false));
+    dispatch(setIsLoadingCut(!isLoadingCut));
   };
 
   const handleDownload = async () => {
@@ -193,7 +189,7 @@ const VideoTrimmer: React.FC<Props> = ({
           <Button
             text="Select and Preview"
             onClickHandler={trimVideo}
-            disabled={isProcessing || !fileReady || isClipDisabled}
+            disabled={isProcessing || !isFileReady || isClipDisabled}
             classTlw="whitespace-nowrap"
           />
         </div>
@@ -211,14 +207,14 @@ const VideoTrimmer: React.FC<Props> = ({
           <p className="text-white">Processing video, please wait...</p>
         )}
 
-        {!fileReady && (
+        {!isFileReady && (
           <>
             <span className="loading loading-ring loading-lg"></span>
             <p className="text-white">Preparing video for cut: {progress}%</p>
           </>
         )}
 
-        {fileReady && (
+        {isFileReady && (
           <p className="text-white">
             File ready for {isClipDisabled ? "download" : "cut"}
           </p>

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Range } from "react-range";
+import { useAppSelector } from "store/hooks";
 
 type Props = {
   minTime: number;
   maxTime: number;
-  duration: number | undefined;
   onRangeChange: (values: number[]) => void;
   videoRef: React.RefObject<HTMLVideoElement>;
 };
@@ -15,11 +15,12 @@ const MIN = 0;
 const RangeSlider: React.FC<Props> = ({
   minTime,
   maxTime,
-  duration,
   onRangeChange,
   videoRef,
 }) => {
   const [values, setValues] = useState([minTime, maxTime]);
+
+  const duration = useAppSelector((state) => state.video.duration);
 
   useEffect(() => {
     if (duration) {

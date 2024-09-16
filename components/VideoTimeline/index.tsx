@@ -4,38 +4,41 @@ import RangeSlider from "components/RangeSlider/RangeSlider";
 import VideoTrimmer from "components/VideoTrimmer/VideoTrimmer";
 import VideoPlayer from "components/video/VideoPlayer";
 import React, { useRef, useState, useEffect, useCallback } from "react";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { setDuration } from "store/slices/videoSlice";
 import { formatTime } from "utils/helpers";
 
 type Props = {
   videoRef: React.RefObject<HTMLVideoElement>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  captureSnapshots: (videoDuration: number) => Promise<void>;
-  loadSnapshotsFromLocalStorage: () => void;
   snapshots: string[];
   openCut: boolean;
-  isCapturing: boolean;
-  duration: number;
-  handleSetDuration: (newDuration: number) => void;
 };
 
 const VideoTimeline: React.FC<Props> = ({
   videoRef,
   canvasRef,
-  captureSnapshots,
-  loadSnapshotsFromLocalStorage,
   snapshots,
   openCut,
-  isCapturing,
-  duration,
-  handleSetDuration,
 }) => {
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [numDivisions, setNumDivisions] = useState<number>(0);
   const [divisionInterval, setDivisionInterval] = useState<number>(0);
   const [minTime, setMinTime] = useState<number>(Math.max(0, currentTime - 40));
   const [maxTime, setMaxTime] = useState<number>(currentTime + 40);
-  const [isLoadindCut, setIsLoadindCut] = useState<boolean>(false);
-  const [snapshotsCaptured, setSnapshotsCaptured] = useState<boolean>(false);
+
+  const videoSrc = useAppSelector((state) => state.videoFile.videoSrc);
+  const isLoadingCut = useAppSelector((state) => state.videoFile.isLoadingCut);
+  const duration = useAppSelector((state) => state.video.duration);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (videoElement) {
+      videoElement.load();
+    }
+  }, [videoSrc]);
 
   useEffect(() => {
     if (duration > 0) {
@@ -56,7 +59,7 @@ const VideoTimeline: React.FC<Props> = ({
       setDivisionInterval(interval);
       setNumDivisions(divisions);
     }
-  }, [duration, videoRef.current?.src]);
+  }, [videoSrc]);
 
   const handleSliderInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(event.target.value);
@@ -82,7 +85,7 @@ const VideoTimeline: React.FC<Props> = ({
         videoElement.removeEventListener("timeupdate", handleTimeUpdate);
       };
     }
-  }, [videoRef.current?.src]);
+  }, [videoSrc]);
 
   const handleRangeChange = (values: number[]) => {
     setMinTime(values[0]);
@@ -90,10 +93,6 @@ const VideoTimeline: React.FC<Props> = ({
   };
 
   const currentIndex = Math.floor((currentTime / duration) * 10);
-
-  const handleLoadingCut = (newDuration: boolean) => {
-    setIsLoadindCut(newDuration);
-  };
 
   return (
     <>
@@ -106,10 +105,7 @@ const VideoTimeline: React.FC<Props> = ({
           className="w-full max-w-4xl"
           autoPlay
         >
-          <source
-            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-            type="video/mp4"
-          />
+          <source src={videoSrc} type="video/mp4" />
         </video>
         {/* <VideoPlayer videoRef={videoRef} duration={duration} /> */}
 
@@ -133,13 +129,12 @@ const VideoTimeline: React.FC<Props> = ({
                 );
               })}
             </div>
-            {isLoadindCut && (
+            {isLoadingCut && (
               <div className="flex items-center space-x-4 mt-4">
                 <RangeSlider
                   videoRef={videoRef}
                   minTime={minTime}
                   maxTime={maxTime}
-                  duration={videoRef.current?.duration}
                   onRangeChange={handleRangeChange}
                 />
               </div>
@@ -193,12 +188,8 @@ const VideoTimeline: React.FC<Props> = ({
           {openCut && (
             <VideoTrimmer
               videoRef={videoRef}
-              captureSnapshots={captureSnapshots}
-              setIsLoadindCut={handleLoadingCut}
-              isLoadindCut={isLoadindCut}
               minTime={minTime}
               maxTime={maxTime}
-              handleSetDuration={handleSetDuration}
             />
           )}
         </div>

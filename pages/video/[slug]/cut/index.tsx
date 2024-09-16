@@ -6,6 +6,10 @@ import { GetServerSideProps, NextPage } from "next";
 import { useRef, useState, useCallback, useEffect } from "react";
 import PreLoader from "components/PreLoader/PreLoader"; // Assuming you have a PreLoader component
 import VideoPlayer from "components/video/VideoPlayer";
+import { setIsCutOpened } from "store/slices/openCutSlice";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { setIsCapturing } from "store/slices/isCapturingSlice";
+import { setDuration } from "store/slices/videoSlice";
 
 type Props = {};
 
@@ -13,10 +17,19 @@ const VideoCut: NextPage<Props> = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const [isCapturing, setIsCapturing] = useState<boolean>(false);
-  const [openCut, setIsCutOpened] = useState<boolean>(false);
   const [snapshots, setSnapshots] = useState<string[]>([]);
-  const [duration, setDuration] = useState<number>(0);
+
+  const openCut = useAppSelector((state) => state.openCut.openCut);
+  const isCapturing = useAppSelector((state) => state.isCapturing.isCapturing);
+  const videoSrc = useAppSelector((state) => state.videoFile.videoSrc);
+  const duration = useAppSelector((state) => state.video.duration);
+
+  const dispatch = useAppDispatch();
+
+  const toggleOpenCut = () => {
+    dispatch(setIsCutOpened(!openCut));
+    videoRef.current?.pause();
+  };
 
   const saveSnapshotsToLocalStorage = useCallback(
     (snapshotsArray: string[]) => {
@@ -40,7 +53,7 @@ const VideoCut: NextPage<Props> = () => {
     setSnapshots([]);
     removeSnapshotsFromLocalStorage();
 
-    setIsCapturing(true);
+    dispatch(setIsCapturing(true));
 
     if (!videoDuration || isNaN(videoDuration) || videoDuration <= 0) {
       console.error("Invalid video duration:", videoDuration);
@@ -53,7 +66,7 @@ const VideoCut: NextPage<Props> = () => {
       const ctx = canvasElement.getContext("2d");
       if (!ctx) {
         console.error("Unable to get 2D context for canvas");
-        setIsCapturing(false);
+        dispatch(setIsCapturing(false));
         return;
       }
 
@@ -112,23 +125,20 @@ const VideoCut: NextPage<Props> = () => {
       if (wasPlaying) {
         videoElement.play();
       }
+      dispatch(setIsCapturing(false));
     }
-  };
-
-  const handleClipVideo = () => {
-    setIsCutOpened(!openCut);
-    videoRef.current?.pause();
   };
 
   const handleLoadedMetadata = () => {
     const videoElement = videoRef.current;
+
     if (videoElement) {
       const videoDuration = videoElement.duration;
-      setDuration(videoDuration);
+      dispatch(setDuration(videoDuration));
 
-      captureSnapshots(videoDuration)
-        .then(() => setIsCapturing(false))
-        .catch((err) => console.error("Error capturing snapshots:", err));
+      captureSnapshots(videoDuration).catch((err) =>
+        console.error("Error capturing snapshots:", err)
+      );
     }
   };
 
@@ -144,37 +154,34 @@ const VideoCut: NextPage<Props> = () => {
         );
       };
     }
-  }, [duration]);
-
-  const handleSetDuration = (newDuration: number) => {
-    setDuration(newDuration);
-  };
+  }, [videoSrc]);
 
   return (
     <div className="bg-slate-700">
-      <div className="container max-w-5xl mx-auto min-h-screen px-2 pb-10 lg:px-0 relative">
-        <VideoTimeline
-          videoRef={videoRef}
-          canvasRef={canvasRef}
-          captureSnapshots={captureSnapshots}
-          isCapturing={isCapturing}
-          loadSnapshotsFromLocalStorage={loadSnapshotsFromLocalStorage}
-          snapshots={snapshots}
-          openCut={openCut}
-          duration={duration}
-          handleSetDuration={handleSetDuration}
-        />
-
-        <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 gap-14">
-          <VideoListTimeline />
-          <PlayButtons videoRef={videoRef} />
-          <Button
-            text="Clip"
-            onClickHandler={handleClipVideo}
-            disabled={openCut}
-          />
+      {isCapturing ? (
+        <div className="h-screen flex items-center justify-center">
+          <PreLoader />
         </div>
-      </div>
+      ) : (
+        <div className="container max-w-5xl mx-auto min-h-screen px-2 pb-10 lg:px-0 relative">
+          <VideoTimeline
+            videoRef={videoRef}
+            canvasRef={canvasRef}
+            snapshots={snapshots}
+            openCut={openCut}
+          />
+
+          <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 gap-14">
+            <VideoListTimeline />
+            <PlayButtons videoRef={videoRef} />
+            <Button
+              text="Clip"
+              onClickHandler={toggleOpenCut}
+              disabled={openCut}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
