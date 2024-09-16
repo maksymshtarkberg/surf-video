@@ -59,7 +59,7 @@ const VideoTimeline: React.FC<Props> = ({
       setDivisionInterval(interval);
       setNumDivisions(divisions);
     }
-  }, [videoSrc]);
+  }, [duration, videoSrc]);
 
   const handleSliderInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTime = parseFloat(event.target.value);

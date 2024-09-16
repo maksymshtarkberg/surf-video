@@ -2,6 +2,8 @@ import Button from "@ui/Button";
 import NavLogIn from "components/navbar/NavLogin";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "store/hooks";
+import { setVideoSrc } from "store/slices/videoFileSlice";
 
 const Nav = () => {
   const router = useRouter();
@@ -23,10 +25,7 @@ const Nav = () => {
 
   const handleBackClick = () => {
     const previousUrl = document.URL;
-    console.log(previousUrl);
-    console.log(window.location.hostname);
-    console.log(previousUrl.includes(window.location.hostname));
-    console.log(window.history);
+
     if (
       router.pathname === "/" ||
       router.pathname === "" ||

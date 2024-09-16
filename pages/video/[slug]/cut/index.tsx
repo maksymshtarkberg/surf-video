@@ -6,14 +6,28 @@ import { GetServerSideProps, NextPage } from "next";
 import { useRef, useState, useCallback, useEffect } from "react";
 import PreLoader from "components/PreLoader/PreLoader"; // Assuming you have a PreLoader component
 import VideoPlayer from "components/video/VideoPlayer";
-import { setIsCutOpened } from "store/slices/openCutSlice";
+import { setIsClipDisabled, setIsCutOpened } from "store/slices/openCutSlice";
 import { useAppDispatch, useAppSelector } from "store/hooks";
 import { setIsCapturing } from "store/slices/isCapturingSlice";
 import { setDuration } from "store/slices/videoSlice";
+import {
+  setDownloadUrl,
+  setFileReady,
+  setIsLoadingCut,
+  setIsProcessing,
+  setTrimmedVideoBlob,
+  setVideoFile,
+  setVideoSrc,
+} from "store/slices/videoFileSlice";
+import { useRouter } from "next/router";
 
-type Props = {};
+type Props = {
+  slug: string;
+};
 
-const VideoCut: NextPage<Props> = () => {
+const VideoCut: NextPage<Props> = ({ slug }) => {
+  const router = useRouter();
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -30,6 +44,33 @@ const VideoCut: NextPage<Props> = () => {
     dispatch(setIsCutOpened(!openCut));
     videoRef.current?.pause();
   };
+  const toggleExit = useCallback(() => {
+    dispatch(
+      setVideoSrc(
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      )
+    );
+    dispatch(setIsLoadingCut(false));
+    dispatch(setDownloadUrl(""));
+    dispatch(setFileReady(false));
+    dispatch(setIsProcessing(false));
+    dispatch(setVideoFile(null));
+    dispatch(setTrimmedVideoBlob(null));
+    dispatch(setIsCutOpened(false));
+    dispatch(setIsClipDisabled(false));
+  }, [dispatch]);
+
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      toggleExit();
+    };
+
+    router.events.on("routeChangeStart", handleRouteChange);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange);
+    };
+  }, [router, toggleExit]);
 
   const saveSnapshotsToLocalStorage = useCallback(
     (snapshotsArray: string[]) => {
@@ -158,30 +199,32 @@ const VideoCut: NextPage<Props> = () => {
 
   return (
     <div className="bg-slate-700">
-      {isCapturing ? (
-        <div className="h-screen flex items-center justify-center">
-          <PreLoader />
-        </div>
-      ) : (
-        <div className="container max-w-5xl mx-auto min-h-screen px-2 pb-10 lg:px-0 relative">
-          <VideoTimeline
-            videoRef={videoRef}
-            canvasRef={canvasRef}
-            snapshots={snapshots}
-            openCut={openCut}
-          />
+      <div className="container max-w-5xl mx-auto min-h-screen px-2 pb-10 lg:px-0 relative">
+        <VideoTimeline
+          videoRef={videoRef}
+          canvasRef={canvasRef}
+          snapshots={snapshots}
+          openCut={openCut}
+        />
 
-          <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 gap-14">
-            <VideoListTimeline />
-            <PlayButtons videoRef={videoRef} />
+        <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 gap-14">
+          <VideoListTimeline />
+          <PlayButtons videoRef={videoRef} />
+          <div className="flex ">
             <Button
               text="Clip"
               onClickHandler={toggleOpenCut}
               disabled={openCut}
             />
+            <Button
+              text="Exit Clip Mode"
+              onClickHandler={toggleExit}
+              disabled={!openCut}
+              classTlw="ml-4"
+            />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -189,7 +232,7 @@ const VideoCut: NextPage<Props> = () => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { slug } = context.query;
   return {
-    props: {},
+    props: { slug },
   };
 };
 
