@@ -10,6 +10,7 @@ import {
   setFileReady,
   setIsLoadingCut,
   setIsProcessing,
+  setProgressLoadingFile,
   setTrimmedVideoBlob,
   setVideoFile,
   setVideoSrc,
@@ -27,16 +28,15 @@ type Props = {
 
 const VideoTrimmer: React.FC<Props> = ({ videoRef, minTime, maxTime }) => {
   const [isDownloadStarted, setIsDownloadStarted] = useState<boolean>(false);
-  const [progress, setProgress] = useState(0);
 
   const videoFile = useAppSelector((state) => state.videoFile.videoFile);
+  const progress = useAppSelector(
+    (state) => state.videoFile.progressLoadingFile
+  );
   const isFileReady = useAppSelector((state) => state.videoFile.isFileReady);
   const isProcessing = useAppSelector((state) => state.videoFile.isProcessing);
   const isLoadingCut = useAppSelector((state) => state.videoFile.isLoadingCut);
 
-  const isClipDisabled = useAppSelector(
-    (state) => state.openCut.isClipDisabled
-  );
   const trimmedVideoBlob = useAppSelector(
     (state) => state.videoFile.trimmedVideoBlob
   );
@@ -53,7 +53,7 @@ const VideoTrimmer: React.FC<Props> = ({ videoRef, minTime, maxTime }) => {
     if (videoRef.current && !videoFile) {
       loadVideoFile();
     }
-  }, [videoFile]);
+  }, []);
 
   const loadVideoFile = async () => {
     console.log("started");
@@ -82,7 +82,7 @@ const VideoTrimmer: React.FC<Props> = ({ videoRef, minTime, maxTime }) => {
           loaded += value.length;
 
           const percentComplete = Math.round((loaded / total) * 100);
-          setProgress(percentComplete);
+          dispatch(setProgressLoadingFile(percentComplete));
           // console.log(`Progress: ${percentComplete}%`);
         }
 
@@ -184,16 +184,33 @@ const VideoTrimmer: React.FC<Props> = ({ videoRef, minTime, maxTime }) => {
 
   return (
     <>
-      <div className="flex items-center py-5 px-4 justify-between gap-5">
+      <div className="flex items-center py-5 justify-between ">
         <div className="flex space-x-4">
           <Button
-            text="Select and Preview"
+            text="Select and Cut"
             onClickHandler={trimVideo}
-            disabled={isProcessing || !isFileReady || isClipDisabled}
+            disabled={isProcessing || !isFileReady || !!downloadUrl}
             classTlw="whitespace-nowrap"
           />
         </div>
+        <div className="text-center">
+          {isProcessing && (
+            <p className="text-white">Processing video, please wait...</p>
+          )}
 
+          {!isFileReady && (
+            <>
+              <span className="loading loading-ring loading-lg"></span>
+              <p className="text-white">Preparing video for cut: {progress}%</p>
+            </>
+          )}
+
+          {isFileReady && (
+            <p className="text-white">
+              File ready for {downloadUrl ? "download" : "cut"}
+            </p>
+          )}
+        </div>
         <div className="flex space-x-4">
           <Button
             text="Download"
@@ -201,24 +218,6 @@ const VideoTrimmer: React.FC<Props> = ({ videoRef, minTime, maxTime }) => {
             disabled={!downloadUrl}
           />
         </div>
-      </div>
-      <div className="text-center">
-        {isProcessing && (
-          <p className="text-white">Processing video, please wait...</p>
-        )}
-
-        {!isFileReady && (
-          <>
-            <span className="loading loading-ring loading-lg"></span>
-            <p className="text-white">Preparing video for cut: {progress}%</p>
-          </>
-        )}
-
-        {isFileReady && (
-          <p className="text-white">
-            File ready for {isClipDisabled ? "download" : "cut"}
-          </p>
-        )}
       </div>
     </>
   );

@@ -12,15 +12,9 @@ type Props = {
   videoRef: React.RefObject<HTMLVideoElement>;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   snapshots: string[];
-  openCut: boolean;
 };
 
-const VideoTimeline: React.FC<Props> = ({
-  videoRef,
-  canvasRef,
-  snapshots,
-  openCut,
-}) => {
+const VideoTimeline: React.FC<Props> = ({ videoRef, canvasRef, snapshots }) => {
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [numDivisions, setNumDivisions] = useState<number>(0);
   const [divisionInterval, setDivisionInterval] = useState<number>(0);
@@ -185,13 +179,12 @@ const VideoTimeline: React.FC<Props> = ({
               })}
             </div>
           </div>
-          {openCut && (
-            <VideoTrimmer
-              videoRef={videoRef}
-              minTime={minTime}
-              maxTime={maxTime}
-            />
-          )}
+
+          <VideoTrimmer
+            videoRef={videoRef}
+            minTime={minTime}
+            maxTime={maxTime}
+          />
         </div>
 
         <canvas ref={canvasRef} width="600" height="400" className="hidden" />

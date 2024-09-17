@@ -15,6 +15,7 @@ import {
   setFileReady,
   setIsLoadingCut,
   setIsProcessing,
+  setProgressLoadingFile,
   setTrimmedVideoBlob,
   setVideoFile,
   setVideoSrc,
@@ -37,6 +38,7 @@ const VideoCut: NextPage<Props> = ({ slug }) => {
   const isCapturing = useAppSelector((state) => state.isCapturing.isCapturing);
   const videoSrc = useAppSelector((state) => state.videoFile.videoSrc);
   const duration = useAppSelector((state) => state.video.duration);
+  const downloadUrl = useAppSelector((state) => state.videoFile.dowloadUrl);
 
   const dispatch = useAppDispatch();
 
@@ -53,6 +55,7 @@ const VideoCut: NextPage<Props> = ({ slug }) => {
     dispatch(setIsLoadingCut(false));
     dispatch(setDownloadUrl(""));
     dispatch(setFileReady(false));
+    dispatch(setProgressLoadingFile(0));
     dispatch(setIsProcessing(false));
     dispatch(setVideoFile(null));
     dispatch(setTrimmedVideoBlob(null));
@@ -204,25 +207,11 @@ const VideoCut: NextPage<Props> = ({ slug }) => {
           videoRef={videoRef}
           canvasRef={canvasRef}
           snapshots={snapshots}
-          openCut={openCut}
         />
 
         <div className="flex justify-between items-center py-5 px-4 sm:px-6 md:px-8 lg:px-10 gap-14">
           <VideoListTimeline />
           <PlayButtons videoRef={videoRef} />
-          <div className="flex ">
-            <Button
-              text="Clip"
-              onClickHandler={toggleOpenCut}
-              disabled={openCut}
-            />
-            <Button
-              text="Exit Clip Mode"
-              onClickHandler={toggleExit}
-              disabled={!openCut}
-              classTlw="ml-4"
-            />
-          </div>
         </div>
       </div>
     </div>

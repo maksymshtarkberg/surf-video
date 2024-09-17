@@ -8,6 +8,7 @@ interface VideoFileState {
   isProcessing: boolean;
   videoSrc: string;
   isLoadingCut: boolean;
+  progressLoadingFile: number;
 }
 
 const initialState: VideoFileState = {
@@ -19,6 +20,7 @@ const initialState: VideoFileState = {
   videoSrc:
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
   isLoadingCut: false,
+  progressLoadingFile: 0,
 };
 
 const videoFileSlice = createSlice({
@@ -46,6 +48,9 @@ const videoFileSlice = createSlice({
     setIsLoadingCut(state, action: PayloadAction<boolean>) {
       state.isLoadingCut = action.payload;
     },
+    setProgressLoadingFile(state, action: PayloadAction<number>) {
+      state.progressLoadingFile = action.payload;
+    },
   },
 });
 
@@ -57,5 +62,6 @@ export const {
   setIsLoadingCut,
   setTrimmedVideoBlob,
   setDownloadUrl,
+  setProgressLoadingFile,
 } = videoFileSlice.actions;
 export default videoFileSlice.reducer;
